@@ -1,0 +1,52 @@
+{
+  "name": "@featurectrl/backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./types/trpc": {
+      "types": "./dist/types/trpc.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "bun --hot --env-file=../../.env src/index.ts",
+    "start": "bun --env-file=../../.env dist/index.js",
+    "build": "tsup",
+    "build-types": "tsup --dts-only",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "check-types": "tsc --noEmit",
+    "db:generate": "bun --env-file=../../.env ./node_modules/.bin/drizzle-kit generate",
+    "db:migrate": "bun --env-file=../../.env ./node_modules/.bin/drizzle-kit migrate",
+    "db:push": "bun --env-file=../../.env ./node_modules/.bin/drizzle-kit push",
+    "db:seed": "bun --env-file=../../.env src/scripts/seed.ts",
+    "db:reset": "bun --env-file=../../.env src/scripts/reset.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/static": "^8.2.0",
+    "@trpc/server": "^11.16.0",
+    "better-auth": "^1.6.9",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.8.5",
+    "lodash": "^4.18.1",
+    "postgres": "^3.4.9",
+    "superjson": "^2.2.2",
+    "uuid": "^14.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@types/bun": "^1.3.13",
+    "@types/lodash": "^4.17.24",
+    "@types/node": "^25.6.0",
+    "@types/uuid": "^11.0.0",
+    "drizzle-kit": "^0.31.10",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
+  }
+}

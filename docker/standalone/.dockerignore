@@ -1,0 +1,4 @@
+*
+!build/
+!entrypoint.sh
+!drizzle.config.js
