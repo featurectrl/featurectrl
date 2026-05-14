@@ -33,14 +33,24 @@ function Loading() {
 
 function Layout() {
   const betterAuth = useBetterAuth();
-  const { data: session } = useSuspenseQuery(betterAuth.getSession.queryOptions());
+  const { data: session, isStale } = useSuspenseQuery(betterAuth.getSession.queryOptions());
 
-  if (!session) {
-    return <Navigate to="/login" replace />;
+  if (!isStale) {
+    if (!session) {
+      return <Navigate to="/login" replace />;
+    }
+
+    if (!session.user.emailVerified) {
+      return <Navigate to="/verify-email" replace />;
+    }
+
+    if (!session?.session.activeOrganizationId) {
+      return <Navigate to="/select-organization" replace />;
+    }
   }
 
-  if (!session?.session.activeOrganizationId) {
-    return <Navigate to="/select-organization" replace />;
+  if (!session) {
+    return <Loading />;
   }
 
   return (

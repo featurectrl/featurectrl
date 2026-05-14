@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import GitHubIconImage from "@/assets/icons/github.svg";
 import GoogleIconImage from "@/assets/icons/google.svg";
 import { useBetterAuth } from "@/lib/auth.ts";
+import { absoluteURL } from "@/lib/urls.ts";
 import { Button } from "@/ui/button.tsx";
 
 const providers = {
@@ -48,7 +49,7 @@ export function SocialLoginButton({ provider, compact }: SocialSignInButtonProps
       className="w-full justify-center"
       onClick={() => {
         signInUsingSocial.mutate({
-          callbackURL: "/select-organization",
+          callbackURL: absoluteURL({ to: "/select-organization" }),
         });
       }}
       disabled={signInUsingSocial.isPending}

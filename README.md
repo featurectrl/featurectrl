@@ -41,9 +41,9 @@ docker run --rm \
 ```sh
 docker run -d --name featurectrl \
   -p 3000:3000 \
+  -e ORIGIN=http://localhost:3000 \
   -e DATABASE_URL=postgres://user:password@host:5432/featurectrl \
   -e BETTER_AUTH_SECRET="replace-with-32-byte-random-secret" \
-  -e STANDALONE_ORIGIN=http://localhost:3000 \
   featurectrl/featurectrl:latest
 ```
 
@@ -79,7 +79,7 @@ services:
     environment:
       DATABASE_URL: postgres://featurectrl:featurectrl@db:5432/featurectrl
       BETTER_AUTH_SECRET: replace-with-32-byte-random-secret
-      STANDALONE_ORIGIN: http://localhost:3000
+      ORIGIN: http://localhost:3000
     depends_on:
       db:
         condition: service_healthy
@@ -97,10 +97,10 @@ Open <http://localhost:3000>, create the first account, and you're in.
 
 | Variable                                    | Required | Default | Description                                                                        |
 |---------------------------------------------|----------|---------|------------------------------------------------------------------------------------|
+| `ORIGIN`                                    | yes      | —       | Public origin where the app is reachable (e.g. `https://flags.example.com`).       |
 | `DATABASE_URL`                              | yes      | —       | Postgres connection string, e.g. `postgres://user:password@host:5432/featurectrl`. |
 | `BETTER_AUTH_SECRET`                        | yes      | —       | 32-byte random value used for sessions.                                            |
-| `STANDALONE_ORIGIN`                         | yes      | —       | Public origin where the app is reachable (e.g. `https://flags.example.com`).       |
-| `BACKEND_PORT`                              | no       | `3000`  | Port the server listens on inside the container.                                   |
+| `PORT`                                      | no       | `3000`  | Port the server listens on inside the container.                                   |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | no       | —       | Set both to enable GitHub OAuth on the login page.                                 |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no       | —       | Set both to enable Google OAuth on the login page.                                 |
 

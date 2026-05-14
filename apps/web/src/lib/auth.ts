@@ -108,6 +108,13 @@ export const betterAuth = {
     },
   }),
 
+  sendVerificationEmail: createReactQueryMethod({
+    key: ["sendVerificationEmail"],
+    mutate: (args: { email: string; callbackURL?: string }) => {
+      return betterAuthClient.sendVerificationEmail(args);
+    },
+  }),
+
   changePassword: createReactQueryMethod({
     key: ["changePassword"],
     mutate: (args: {

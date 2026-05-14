@@ -15,7 +15,7 @@ export const fastify = Fastify({
 });
 
 await fastify.register(cors, {
-  origin: env.BACKEND_TRUSTED_ORIGINS,
+  origin: [env.ORIGIN],
   credentials: true,
 });
 

@@ -17,6 +17,7 @@ import { Route as MainSegmentsRouteRouteImport } from './routes/_main/segments/r
 import { Route as MainProfileRouteRouteImport } from './routes/_main/profile/route'
 import { Route as MainFlagsRouteRouteImport } from './routes/_main/flags/route'
 import { Route as MainAppsRouteRouteImport } from './routes/_main/apps/route'
+import { Route as AuthVerifyEmailRouteRouteImport } from './routes/_auth/verify-email/route'
 import { Route as AuthSignUpRouteRouteImport } from './routes/_auth/sign-up/route'
 import { Route as AuthSelectOrganizationRouteRouteImport } from './routes/_auth/select-organization/route'
 import { Route as AuthResetPasswordRouteRouteImport } from './routes/_auth/reset-password/route'
@@ -62,6 +63,11 @@ const MainAppsRouteRoute = MainAppsRouteRouteImport.update({
   path: '/apps',
   getParentRoute: () => MainRouteRoute,
 } as any)
+const AuthVerifyEmailRouteRoute = AuthVerifyEmailRouteRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthSignUpRouteRoute = AuthSignUpRouteRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRouteRoute
   '/select-organization': typeof AuthSelectOrganizationRouteRoute
   '/sign-up': typeof AuthSignUpRouteRoute
+  '/verify-email': typeof AuthVerifyEmailRouteRoute
   '/apps': typeof MainAppsRouteRoute
   '/flags': typeof MainFlagsRouteRoute
   '/profile': typeof MainProfileRouteRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRouteRoute
   '/select-organization': typeof AuthSelectOrganizationRouteRoute
   '/sign-up': typeof AuthSignUpRouteRoute
+  '/verify-email': typeof AuthVerifyEmailRouteRoute
   '/apps': typeof MainAppsRouteRoute
   '/flags': typeof MainFlagsRouteRoute
   '/profile': typeof MainProfileRouteRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/_auth/reset-password': typeof AuthResetPasswordRouteRoute
   '/_auth/select-organization': typeof AuthSelectOrganizationRouteRoute
   '/_auth/sign-up': typeof AuthSignUpRouteRoute
+  '/_auth/verify-email': typeof AuthVerifyEmailRouteRoute
   '/_main/apps': typeof MainAppsRouteRoute
   '/_main/flags': typeof MainFlagsRouteRoute
   '/_main/profile': typeof MainProfileRouteRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/select-organization'
     | '/sign-up'
+    | '/verify-email'
     | '/apps'
     | '/flags'
     | '/profile'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/select-organization'
     | '/sign-up'
+    | '/verify-email'
     | '/apps'
     | '/flags'
     | '/profile'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/_auth/reset-password'
     | '/_auth/select-organization'
     | '/_auth/sign-up'
+    | '/_auth/verify-email'
     | '/_main/apps'
     | '/_main/flags'
     | '/_main/profile'
@@ -250,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainAppsRouteRouteImport
       parentRoute: typeof MainRouteRoute
     }
+    '/_auth/verify-email': {
+      id: '/_auth/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/sign-up': {
       id: '/_auth/sign-up'
       path: '/sign-up'
@@ -302,6 +321,7 @@ interface AuthRouteRouteChildren {
   AuthResetPasswordRouteRoute: typeof AuthResetPasswordRouteRoute
   AuthSelectOrganizationRouteRoute: typeof AuthSelectOrganizationRouteRoute
   AuthSignUpRouteRoute: typeof AuthSignUpRouteRoute
+  AuthVerifyEmailRouteRoute: typeof AuthVerifyEmailRouteRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
@@ -311,6 +331,7 @@ const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthResetPasswordRouteRoute: AuthResetPasswordRouteRoute,
   AuthSelectOrganizationRouteRoute: AuthSelectOrganizationRouteRoute,
   AuthSignUpRouteRoute: AuthSignUpRouteRoute,
+  AuthVerifyEmailRouteRoute: AuthVerifyEmailRouteRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

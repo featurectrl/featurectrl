@@ -92,6 +92,10 @@ function SelectOrganizationPage() {
     return <Navigate to="/login" replace />;
   }
 
+  if (sessionData && !sessionData.user.emailVerified) {
+    return <Navigate to="/verify-email" replace />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-center gap-3 text-center">

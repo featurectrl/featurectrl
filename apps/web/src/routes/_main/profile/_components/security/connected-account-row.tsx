@@ -10,6 +10,7 @@ import {
   WidgetRowLabelTitle,
 } from "@/components/widget.tsx";
 import { useBetterAuth } from "@/lib/auth.ts";
+import { absoluteURL } from "@/lib/urls.ts";
 import { Button } from "@/ui/button.tsx";
 import { Skeleton } from "@/ui/skeleton.tsx";
 
@@ -102,7 +103,11 @@ export function ConnectedAccountRow({ provider, account }: ConnectedAccountRowPr
             type="button"
             size="sm"
             disabled={connectMutation.isPending}
-            onClick={() => connectMutation.mutate({ callbackURL: "/profile" })}
+            onClick={() =>
+              connectMutation.mutate({
+                callbackURL: absoluteURL({ to: "/profile" }),
+              })
+            }
           >
             {connectMutation.isPending ? (
               <Loader2Icon className="size-4 animate-spin" />

@@ -12,11 +12,18 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg" }),
   baseURL: path.join(env.BFF_API_ORIGIN, "auth"),
   secret: env.BETTER_AUTH_SECRET,
-  trustedOrigins: env.BACKEND_TRUSTED_ORIGINS,
+  trustedOrigins: [env.ORIGIN],
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
     sendResetPassword: async ({ user, url }) => {
       console.log(`[auth] password reset requested for ${user.email}: ${url}`);
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log(`[auth] email verification requested for ${user.email}: ${url}`);
     },
   },
   user: {

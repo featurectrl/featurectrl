@@ -18,7 +18,9 @@ export function withPersistentLastSession({
 }) {
   const lastSessionData = readLastSessionSnapshot(storage, storageKey, { storageKeyExpiryTime });
   if (lastSessionData) {
-    queryClient.setQueryData(betterAuth.getSession.queryKey(), lastSessionData);
+    queryClient.setQueryData(betterAuth.getSession.queryKey(), lastSessionData, {
+      updatedAt: 1,
+    });
   }
 
   const observer = new QueryObserver(queryClient, betterAuth.getSession.queryOptions());

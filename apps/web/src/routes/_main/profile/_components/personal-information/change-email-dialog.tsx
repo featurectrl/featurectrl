@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useBetterAuth } from "@/lib/auth.ts";
+import { absoluteURL } from "@/lib/urls.ts";
 import { Button } from "@/ui/button.tsx";
 import {
   Dialog,
@@ -57,7 +58,7 @@ export function ChangeEmailDialog({ handle, currentEmail }: ChangeEmailDialogPro
   const onSubmit = form.handleSubmit(async (values) => {
     await changeEmailMutation.mutateAsync({
       newEmail: values.newEmail,
-      callbackURL: "/profile",
+      callbackURL: absoluteURL({ to: "/profile" }),
     });
 
     handle.close();
