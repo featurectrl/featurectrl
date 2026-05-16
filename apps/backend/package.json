@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
-    "@fastify/static": "^8.2.0",
+    "@fastify/static": "^9.1.3",
     "@react-email/ui": "6.1.4",
     "@trpc/server": "^11.16.0",
     "better-auth": "^1.6.9",
