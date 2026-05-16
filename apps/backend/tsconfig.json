@@ -5,6 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["bun"],
+    "jsx": "react-jsx",
 
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
@@ -25,5 +26,5 @@
 
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "drizzle.config.ts"]
+  "include": ["src/**/*", "tsup.config.ts", "drizzle.config.ts"]
 }

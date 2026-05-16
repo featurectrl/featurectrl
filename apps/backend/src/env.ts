@@ -29,8 +29,24 @@ const envSchema = z
       .string()
       .optional()
       .transform((value) => value === "true"),
+
+    EMAIL_BACKEND_URL: z
+      .string()
+      .regex(/^(console|smtps?):\/\//, "must start with console://, smtp://, or smtps://")
+      .default("console://"),
+
+    EMAIL_FROM: z.string().optional(),
   })
   .transform((data, ctx) => {
+    if (data.EMAIL_BACKEND_URL.startsWith("smtp") && !data.EMAIL_FROM) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["EMAIL_FROM"],
+        message: "EMAIL_FROM is required",
+      });
+      return z.NEVER;
+    }
+
     if (data.STANDALONE) {
       const origin = data.ORIGIN.replace(/\/$/, "");
       return {

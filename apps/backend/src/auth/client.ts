@@ -6,6 +6,7 @@ import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
 import { db } from "@/db";
 import { environment } from "@/db/schema";
 import { withActiveOrganization } from "@/db/with-active-organization";
+import { sendTemplateEmail } from "@/emails/send";
 import { env } from "@/env";
 
 export const auth = betterAuth({
@@ -17,20 +18,36 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     sendResetPassword: async ({ user, url }) => {
-      console.log(`[auth] password reset requested for ${user.email}: ${url}`);
+      await sendTemplateEmail({
+        to: user.email,
+        templateName: "reset-password",
+        templateParameters: { email: user.email, url },
+      });
     },
   },
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      console.log(`[auth] email verification requested for ${user.email}: ${url}`);
+      await sendTemplateEmail({
+        to: user.email,
+        templateName: "email-verification",
+        templateParameters: { email: user.email, url },
+      });
     },
   },
   user: {
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-        console.log(`[auth] email change requested for ${user.email} → ${newEmail}: ${url}`);
+        await sendTemplateEmail({
+          to: user.email,
+          templateName: "change-email",
+          templateParameters: {
+            currentEmail: user.email,
+            newEmail,
+            url,
+          },
+        });
       },
     },
   },
@@ -58,6 +75,20 @@ export const auth = betterAuth({
   },
   plugins: [
     organization({
+      sendInvitationEmail: async (args) => {
+        const url = `${env.ORIGIN}/select-organization?invitation=${args.id}`;
+
+        await sendTemplateEmail({
+          to: args.email,
+          templateName: "invitation",
+          templateParameters: {
+            invitedEmail: args.email,
+            organizationName: args.organization.name,
+            inviterName: args.inviter.user.name,
+            url,
+          },
+        });
+      },
       organizationHooks: {
         afterCreateOrganization: async ({ organization: org }) => {
           await db.transaction(async (tx) => {
