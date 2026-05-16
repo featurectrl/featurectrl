@@ -1,4 +1,4 @@
-import { InlineAssetProvider } from "@/emails/assets-provider";
+import { InlineAssetProvider } from "@/emails/shared/assets-provider";
 import { emailVerificationTemplate } from "@/emails/templates/email-verification-template";
 import { props } from "./props";
 

@@ -1,4 +1,4 @@
-import { useImage } from "../assets-provider";
+import { useImage } from "../shared/assets-provider";
 
 type LogoProps = {
   className?: string;

@@ -1,11 +1,10 @@
 import { render } from "react-email";
-import type { SendMailOptions } from "@/lib/mailer";
-import { AssetProvider, createAttachmentCollector } from "./assets-provider";
+import { AssetProvider, createAttachmentCollector } from "./shared/assets-provider";
 import { changeEmailTemplate } from "./templates/change-email-template";
 import { emailVerificationTemplate } from "./templates/email-verification-template";
 import { invitationTemplate } from "./templates/invitation-template";
 import { resetPasswordTemplate } from "./templates/reset-password-template";
-import type { EmailTemplate, EmailTemplateProps } from "./types";
+import type { EmailAttachment, EmailTemplate, ExtractEmailTemplateProps } from "./types";
 
 const TEMPLATES = {
   "change-email": changeEmailTemplate,
@@ -15,26 +14,35 @@ const TEMPLATES = {
 } as const;
 
 export type TemplateName = keyof typeof TEMPLATES;
-
-export type TemplateProps<T extends TemplateName> = EmailTemplateProps<(typeof TEMPLATES)[T]>;
+export type TemplateProps<T extends TemplateName> = ExtractEmailTemplateProps<
+  (typeof TEMPLATES)[T]
+>;
 
 export async function renderEmailTemplate<T extends TemplateName>(
-  name: T,
-  props: TemplateProps<T>,
-): Promise<Pick<SendMailOptions, "subject" | "text" | "html" | "attachments">> {
-  const template = TEMPLATES[name] as EmailTemplate<TemplateProps<T>>;
+  templateName: T,
+  templateParameters: TemplateProps<T>,
+): Promise<{
+  subject: string;
+  text: string;
+  html: string;
+  attachments: EmailAttachment[];
+}> {
+  const template = TEMPLATES[templateName] as EmailTemplate<TemplateProps<T>>;
+
   const attachmentsCollector = createAttachmentCollector();
 
+  const subject = template.subject(templateParameters);
+  const text = template.bodyText(templateParameters);
   const html = await render(
     <AssetProvider attachmentsCollector={attachmentsCollector}>
-      <template.bodyHtml {...props} />
+      <template.bodyHtml {...templateParameters} />
     </AssetProvider>,
   );
 
   return {
-    subject: template.subject(props),
-    text: template.bodyText(props),
+    subject,
+    text,
     html,
-    attachments: [...attachmentsCollector],
+    attachments: attachmentsCollector,
   };
 }

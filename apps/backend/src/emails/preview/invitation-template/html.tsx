@@ -1,4 +1,4 @@
-import { InlineAssetProvider } from "@/emails/assets-provider";
+import { InlineAssetProvider } from "@/emails/shared/assets-provider";
 import { invitationTemplate } from "@/emails/templates/invitation-template";
 import { props } from "./props";
 

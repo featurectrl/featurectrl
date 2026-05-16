@@ -6,7 +6,7 @@ import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
 import { db } from "@/db";
 import { environment } from "@/db/schema";
 import { withActiveOrganization } from "@/db/with-active-organization";
-import { sendTemplatedEmail } from "@/emails/send";
+import { sendTemplateEmail } from "@/emails/send";
 import { env } from "@/env";
 
 export const auth = betterAuth({
@@ -18,23 +18,35 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     sendResetPassword: async ({ user, url }) => {
-      await sendTemplatedEmail("reset-password", user.email, { email: user.email, url });
+      await sendTemplateEmail({
+        to: user.email,
+        templateName: "reset-password",
+        templateParameters: { email: user.email, url },
+      });
     },
   },
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await sendTemplatedEmail("email-verification", user.email, { email: user.email, url });
+      await sendTemplateEmail({
+        to: user.email,
+        templateName: "email-verification",
+        templateParameters: { email: user.email, url },
+      });
     },
   },
   user: {
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-        await sendTemplatedEmail("change-email", user.email, {
-          currentEmail: user.email,
-          newEmail,
-          url,
+        await sendTemplateEmail({
+          to: user.email,
+          templateName: "change-email",
+          templateParameters: {
+            currentEmail: user.email,
+            newEmail,
+            url,
+          },
         });
       },
     },
@@ -66,11 +78,15 @@ export const auth = betterAuth({
       sendInvitationEmail: async (args) => {
         const url = `${env.ORIGIN}/select-organization?invitation=${args.id}`;
 
-        await sendTemplatedEmail("invitation", args.email, {
-          invitedEmail: args.email,
-          organizationName: args.organization.name,
-          inviterName: args.inviter.user.name,
-          url,
+        await sendTemplateEmail({
+          to: args.email,
+          templateName: "invitation",
+          templateParameters: {
+            invitedEmail: args.email,
+            organizationName: args.organization.name,
+            inviterName: args.inviter.user.name,
+            url,
+          },
         });
       },
       organizationHooks: {

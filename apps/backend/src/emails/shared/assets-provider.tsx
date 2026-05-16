@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { basename, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createContext, type ReactNode, useCallback, useContext } from "react";
-import type { SendMailAttachment } from "@/lib/mailer";
+import type { EmailAttachment } from "@/emails/types";
 
 function resolveAssetsDir(): string {
   const fromModule = fileURLToPath(new URL("./assets/", import.meta.url));
@@ -47,7 +47,7 @@ function loadAsset(assetPath: string) {
   };
 }
 
-export function createAttachmentCollector(): SendMailAttachment[] {
+export function createAttachmentCollector(): EmailAttachment[] {
   return [];
 }
 
@@ -80,7 +80,7 @@ export function InlineAssetProvider({ children }: InlineAssetProviderProps) {
 }
 
 type AssetProviderProps = {
-  attachmentsCollector: SendMailAttachment[];
+  attachmentsCollector: EmailAttachment[];
   children: ReactNode;
 };
 
