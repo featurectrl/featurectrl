@@ -1,6 +1,11 @@
+import { InlineAssetProvider } from "@/emails/assets-provider";
 import { changeEmailTemplate } from "@/emails/templates/change-email-template";
 import { props } from "./props";
 
 export default function () {
-  return <changeEmailTemplate.bodyHtml {...props} />;
+  return (
+    <InlineAssetProvider>
+      <changeEmailTemplate.bodyHtml {...props} />
+    </InlineAssetProvider>
+  );
 }

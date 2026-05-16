@@ -1,5 +1,10 @@
-import { Button, Heading, Text } from "react-email";
-import { EmailLayout } from "@/emails/shared/EmailLayout";
+import { Column, Row, Section } from "react-email";
+import { Layout } from "@/emails/components/layout";
+import { Button } from "@/emails/components/ui/button";
+import { Divider } from "@/emails/components/ui/divider";
+import { Heading } from "@/emails/components/ui/heading";
+import { Link } from "@/emails/components/ui/link";
+import { Text } from "@/emails/components/ui/text";
 import type { EmailTemplate } from "@/emails/types";
 
 export type InvitationEmailTemplateProps = {
@@ -10,44 +15,79 @@ export type InvitationEmailTemplateProps = {
 };
 
 function subject(props: InvitationEmailTemplateProps) {
-  return `You're invited to join ${props.organizationName}`;
+  return `You're invited to join ${props.organizationName} on featurectrl`;
 }
 
 const bodyText = (props: InvitationEmailTemplateProps) => {
   const inviter = props.inviterName ? `${props.inviterName} invited` : "You've been invited";
   return `
-Hi,
-
-${inviter} you to join ${props.organizationName} on FeatureCtrl.
+${inviter} you to join ${props.organizationName} on featurectrl.
 
 Accept the invitation by visiting:
 ${props.url}
 
 If you weren't expecting this invitation, you can safely ignore this message.
-`;
+`.trimStart();
 };
 
 function BodyHtml(props: InvitationEmailTemplateProps) {
-  const inviter = props.inviterName ? (
-    <>
-      <strong>{props.inviterName}</strong> invited
-    </>
-  ) : (
-    <>You've been invited</>
-  );
+  const orgAvatarLetter = props.organizationName.charAt(0).toUpperCase();
+
   return (
-    <EmailLayout>
-      <Heading style={{ color: "#111827", fontSize: "20px", margin: "0 0 12px" }}>
-        Join {props.organizationName}
+    <Layout preview={`Join the ${props.organizationName} workspace on featurectrl.`}>
+      <Heading className="mb-2">
+        {props.inviterName ? (
+          <>
+            {props.inviterName} invited you to {props.organizationName}.
+          </>
+        ) : (
+          <>You're invited to {props.organizationName}.</>
+        )}
       </Heading>
-      <Text style={{ color: "#374151", fontSize: "14px", margin: "0 0 20px" }}>
-        {inviter} you to join <strong>{props.organizationName}</strong> on FeatureCtrl.
+
+      <Text className="mb-4">
+        {props.inviterName ? (
+          <>
+            <span className="font-semibold">{props.inviterName}</span> added you to the{" "}
+            <span className="font-semibold">{props.organizationName}</span> on featurectrl. You'll
+            be able to manage feature flags alongside the team.
+          </>
+        ) : (
+          <>
+            You've been added to the <span className="font-semibold">{props.organizationName}</span>{" "}
+            workspace on featurectrl. You'll be able to manage feature flags alongside the team.
+          </>
+        )}
       </Text>
+
+      <Section className="bg-stone-100 border border-solid border-stone-200 rounded-lg p-4 mb-4">
+        <Row>
+          <Column className="w-10 pr-3">
+            <div className="size-10 rounded-lg bg-stone-900 text-stone-100 text-center text-base font-semibold leading-10">
+              {orgAvatarLetter}
+            </div>
+          </Column>
+
+          <Column>
+            <div className="text-base font-semibold text-stone-900">{props.organizationName}</div>
+            <div className="text-xs uppercase text-stone-500">Organization</div>
+          </Column>
+        </Row>
+      </Section>
+
       <Button href={props.url}>Accept invitation</Button>
-      <Text style={{ color: "#6b7280", fontSize: "12px", margin: "20px 0 0" }}>
-        If you weren't expecting this invitation, you can safely ignore this message.
-      </Text>
-    </EmailLayout>
+
+      <Divider className="my-6" />
+
+      <Section>
+        <Text size="sm" muted>
+          Trouble with the button? Paste this URL into your browser
+        </Text>
+        <Link href={props.url} className="text-sm break-all">
+          {props.url}
+        </Link>
+      </Section>
+    </Layout>
   );
 }
 

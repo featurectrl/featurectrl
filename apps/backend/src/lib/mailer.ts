@@ -11,6 +11,7 @@ const transport = env.EMAIL_BACKEND_URL.startsWith("console://")
     });
 
 export type SendMailOptions = nodemailer.SendMailOptions;
+export type SendMailAttachment = NonNullable<nodemailer.SendMailOptions["attachments"]>[number];
 
 export async function sendMail(opts: nodemailer.SendMailOptions): Promise<void> {
   await transport.sendMail(opts);

@@ -1,4 +1,4 @@
-import { TextPreview } from "@/emails/shared/TextPreview";
+import { TextPreview } from "@/emails/shared/text-preview";
 import { invitationTemplate } from "@/emails/templates/invitation-template";
 import { props } from "./props";
 
