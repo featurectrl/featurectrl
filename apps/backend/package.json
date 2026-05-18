@@ -20,9 +20,9 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "check-types": "tsc --noEmit",
-    "db:generate": "bun --env-file=../../.env ./node_modules/.bin/drizzle-kit generate",
-    "db:migrate": "bun --env-file=../../.env ./node_modules/.bin/drizzle-kit migrate",
-    "db:push": "bun --env-file=../../.env ./node_modules/.bin/drizzle-kit push",
+    "db:generate": "bun --env-file=../../.env drizzle-kit generate",
+    "db:migrate": "bun --env-file=../../.env drizzle-kit migrate",
+    "db:push": "bun --env-file=../../.env drizzle-kit push",
     "db:seed": "bun --env-file=../../.env src/scripts/seed.ts",
     "db:reset": "bun --env-file=../../.env src/scripts/reset.ts",
     "email:preview": "email dev -d src/emails/preview"
