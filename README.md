@@ -95,15 +95,17 @@ Open <http://localhost:3000>, create the first account, and you're in.
 
 ## Environment variables
 
-| Variable                                    | Required | Default | Description                                                                        |
-|---------------------------------------------|----------|---------|------------------------------------------------------------------------------------|
-| `ORIGIN`                                    | yes      | —       | Public origin where the app is reachable (e.g. `https://flags.example.com`).       |
-| `DATABASE_URL`                              | yes      | —       | Postgres connection string, e.g. `postgres://user:password@host:5432/featurectrl`. |
-| `BETTER_AUTH_SECRET`                        | yes      | —       | 32-byte random value used for sessions.                                            |
-| `PORT`                                      | no       | `3000`  | Port the server listens on inside the container.                                   |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | no       | —       | Set both to enable GitHub OAuth on the login page.                                 |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no       | —       | Set both to enable Google OAuth on the login page.                                 |
-| `DISABLE_RATE_LIMIT`                        | no       | `false` | Set to `true` to disable the built-in per-IP rate limit.                           |
+| Variable                                    | Required | Default      | Description                                                                        |
+|---------------------------------------------|----------|--------------|------------------------------------------------------------------------------------|
+| `ORIGIN`                                    | yes      | —            | Public origin where the app is reachable (e.g. `https://flags.example.com`).       |
+| `DATABASE_URL`                              | yes      | —            | Postgres connection string, e.g. `postgres://user:password@host:5432/featurectrl`. |
+| `EMAIL_BACKEND_URL`                         | no       | `console://` | Email transport. `smtp(s)://user:pass@host:port` or `console://`.                  |
+| `EMAIL_FROM`                                | no\*     | —            | From address for outgoing emails.                                                  |
+| `BETTER_AUTH_SECRET`                        | yes      | —            | 32-byte random value used for sessions.                                            |
+| `PORT`                                      | no       | `3000`       | Port the server listens on inside the container.                                   |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | no       | —            | Set both to enable GitHub OAuth on the login page.                                 |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no       | —            | Set both to enable Google OAuth on the login page.                                 |
+| `DISABLE_RATE_LIMIT`                        | no       | `false`      | Set to `true` to disable the built-in per-IP rate limit.                           |
 
 ## SDKs
 
