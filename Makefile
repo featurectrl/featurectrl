@@ -74,3 +74,6 @@ db-reset:
 
 build-docker-images:
 	tools/build-docker-standalone.sh
+
+release:
+	tools/release.sh
