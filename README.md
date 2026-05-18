@@ -103,6 +103,7 @@ Open <http://localhost:3000>, create the first account, and you're in.
 | `PORT`                                      | no       | `3000`  | Port the server listens on inside the container.                                   |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | no       | —       | Set both to enable GitHub OAuth on the login page.                                 |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no       | —       | Set both to enable Google OAuth on the login page.                                 |
+| `DISABLE_RATE_LIMIT`                        | no       | `false` | Set to `true` to disable the built-in per-IP rate limit.                           |
 
 ## SDKs
 

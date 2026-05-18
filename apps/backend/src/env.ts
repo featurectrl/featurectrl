@@ -30,6 +30,11 @@ const envSchema = z
       .optional()
       .transform((value) => value === "true"),
 
+    DISABLE_RATE_LIMIT: z
+      .string()
+      .optional()
+      .transform((value) => value === "true"),
+
     EMAIL_BACKEND_URL: z
       .string()
       .regex(/^(console|smtps?):\/\//, "must start with console://, smtp://, or smtps://")

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import cors from "@fastify/cors";
+import rateLimit from "@fastify/rate-limit";
 import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { env } from "@/env";
@@ -13,6 +14,11 @@ import { trpcPlugin } from "./trpc/fastify";
 export const fastify = Fastify({
   routerOptions: { maxParamLength: 5000 },
 });
+
+if (!env.DISABLE_RATE_LIMIT) {
+  // Basic abuse/DoS guard - not a per-user quota system.
+  await fastify.register(rateLimit);
+}
 
 await fastify.register(cors, {
   origin: [env.ORIGIN],
