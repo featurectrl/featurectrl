@@ -6,7 +6,7 @@ FROM oven/bun:1.3.10-alpine AS deps
 WORKDIR /app
 
 COPY build/package.json build/bun.lock ./
-RUN bun install --production --frozen-lockfile
+RUN bun install --production
 
 # ---- Stage 2: runtime on Node LTS ----
 FROM node:24-alpine AS runtime
