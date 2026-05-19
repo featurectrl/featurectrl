@@ -4,10 +4,6 @@ on:
   push:
     tags: ['v*']
 
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
 
@@ -15,6 +11,9 @@ jobs:
   build-backend:
     name: Build backend
     runs-on: ubuntu-latest
+    concurrency:
+      group: build-${{ github.ref }}-backend
+      cancel-in-progress: true
     env:
       STANDALONE: 'true'
     steps:
@@ -41,6 +40,9 @@ jobs:
   build-web:
     name: Build web
     runs-on: ubuntu-latest
+    concurrency:
+      group: build-${{ github.ref }}-web
+      cancel-in-progress: true
     env:
       STANDALONE: 'true'
     steps:
@@ -67,6 +69,10 @@ jobs:
   release:
     name: Release standalone image
     runs-on: ubuntu-latest
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
+
     needs: [build-backend, build-web]
     steps:
       - uses: actions/checkout@v6
@@ -74,12 +80,12 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: backend-dist
-          path: docker/standalone/build
+          path: apps/backend/dist
 
       - uses: actions/download-artifact@v8
         with:
           name: web-dist
-          path: docker/standalone/build/public
+          path: apps/web/dist
 
       - uses: docker/setup-qemu-action@v4
 
@@ -89,6 +95,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - run: ./docker/standalone/prepare.sh
 
       - id: meta
         uses: docker/metadata-action@v6
