@@ -1,14 +1,16 @@
 # syntax=docker/dockerfile:1.7
 
-# ---- Stage 1: install production deps with Bun ----
+# ---- Install production deps with Bun ----
 FROM oven/bun:1.3.10-alpine AS deps
 
 WORKDIR /app
 
 COPY build/package.json build/bun.lock ./
-RUN bun install --production
 
-# ---- Stage 2: runtime on Node LTS ----
+ENV NODE_ENV=production
+RUN bun install --frozen-lockfile --production
+
+# ---- Runtime on Node LTS ----
 FROM node:24-alpine AS runtime
 
 RUN apk add --no-cache tini
