@@ -1,4 +1,4 @@
-import { render } from "react-email";
+import { renderJSX } from "./renderer";
 import { AssetProvider, createAttachmentCollector } from "./shared/assets-provider";
 import { changeEmailTemplate } from "./templates/change-email-template";
 import { emailVerificationTemplate } from "./templates/email-verification-template";
@@ -33,7 +33,7 @@ export async function renderEmailTemplate<T extends TemplateName>(
 
   const subject = template.subject(templateParameters);
   const text = template.bodyText(templateParameters);
-  const html = await render(
+  const html = await renderJSX(
     <AssetProvider attachmentsCollector={attachmentsCollector}>
       <template.bodyHtml {...templateParameters} />
     </AssetProvider>,

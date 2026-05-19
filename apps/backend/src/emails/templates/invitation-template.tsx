@@ -1,9 +1,11 @@
-import { Column, Row, Section } from "react-email";
 import { Layout } from "@/emails/components/layout";
 import { Button } from "@/emails/components/ui/button";
+import { Column } from "@/emails/components/ui/column";
 import { Divider } from "@/emails/components/ui/divider";
 import { Heading } from "@/emails/components/ui/heading";
 import { Link } from "@/emails/components/ui/link";
+import { Row } from "@/emails/components/ui/row";
+import { Section } from "@/emails/components/ui/section";
 import { Text } from "@/emails/components/ui/text";
 import type { EmailTemplate } from "@/emails/types";
 

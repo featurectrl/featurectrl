@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { Section } from "react-email";
+import { Section } from "./section";
 
-type NoticeProps = {
+interface NoticeProps {
   className?: string;
   children: ReactNode;
-};
+}
 
 export function Notice({ className, children }: NoticeProps) {
   return (

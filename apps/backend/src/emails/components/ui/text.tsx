@@ -1,17 +1,16 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { Text as TextPrimitive } from "react-email";
 
-type TextProps = {
+interface TextProps {
   muted?: boolean;
   size?: "xs" | "sm" | "base" | "2xl";
   className?: string;
   children: ReactNode;
-};
+}
 
 export function Text({ children, className, muted, size = "base" }: TextProps) {
   return (
-    <TextPrimitive
+    <p
       className={clsx(
         "m-0",
         {
@@ -25,6 +24,6 @@ export function Text({ children, className, muted, size = "base" }: TextProps) {
       )}
     >
       {children}
-    </TextPrimitive>
+    </p>
   );
 }

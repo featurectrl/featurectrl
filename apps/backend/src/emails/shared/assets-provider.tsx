@@ -11,8 +11,6 @@ function resolveAssetsDir(): string {
     return fromModule;
   }
 
-  // The react-email preview dev server rewrites `import.meta.url`; fall back
-  // to the path relative to cwd (`apps/backend`).
   return join(process.cwd(), "src/emails/assets");
 }
 

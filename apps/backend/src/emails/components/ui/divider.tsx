@@ -1,14 +1,13 @@
 import clsx from "clsx";
-import { Hr } from "react-email";
 
-type DividerProps = {
+interface DividerProps {
   dashed?: boolean;
   className?: string;
-};
+}
 
 export function Divider({ dashed, className }: DividerProps) {
   return (
-    <Hr
+    <hr
       className={clsx(
         "border-0 border-t border-stone-200",
         {
