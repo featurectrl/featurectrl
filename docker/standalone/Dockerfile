@@ -7,8 +7,7 @@ WORKDIR /app
 
 COPY build/package.json build/bun.lock ./
 
-ENV NODE_ENV=production
-RUN bun install --frozen-lockfile --production
+RUN NODE_ENV=production bun install --omit=dev --omit=peer --frozen-lockfile
 
 # ---- Runtime on Node LTS ----
 FROM node:24-alpine AS runtime
