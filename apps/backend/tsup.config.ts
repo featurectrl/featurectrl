@@ -13,7 +13,7 @@ export default defineConfig([
     platform: "node",
     bundle: true,
     splitting: false,
-    sourcemap: true,
+    sourcemap: (process.env.SOURCEMAP === "true"),
     clean: true,
     dts: false,
     skipNodeModulesBundle: true,
