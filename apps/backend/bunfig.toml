@@ -1,0 +1,1 @@
+preload = ["./build-tools/dataurl-loader.ts"]

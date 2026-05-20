@@ -1,4 +1,4 @@
-declare module "*.svg" {
-  const content: Uint8Array | string;
+declare module "*?dataurl" {
+  const content: string;
   export default content;
 }

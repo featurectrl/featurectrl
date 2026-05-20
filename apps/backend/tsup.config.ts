@@ -1,5 +1,6 @@
 import {cp} from "node:fs/promises";
 import {defineConfig} from "tsup";
+import {dataUrlLoader} from "./build-tools/dataurl-loader";
 
 export default defineConfig([
   {
@@ -17,6 +18,7 @@ export default defineConfig([
     clean: true,
     dts: false,
     skipNodeModulesBundle: true,
+    esbuildPlugins: [dataUrlLoader],
     async onSuccess() {
       await cp("src/db/migrations", "dist/db/migrations", {
         recursive: true

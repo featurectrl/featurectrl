@@ -26,5 +26,5 @@
 
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "scripts/**/*", "tsup.config.ts", "drizzle.config.ts"]
+  "include": ["src/**/*", "scripts/**/*", "build-tools/**/*", "tsup.config.ts", "drizzle.config.ts"]
 }
