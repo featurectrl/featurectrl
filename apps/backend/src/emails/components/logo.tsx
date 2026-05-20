@@ -1,13 +1,13 @@
 import type { CSSProperties } from "react";
-import { useImage } from "../shared/assets-provider";
+import imageSource from "../assets/logo-full.svg" with { loader: "dataurl" };
 import { Img } from "./ui/img";
+
+const imageSourceDataUrl = imageSource as string;
 
 interface LogoProps {
   style?: CSSProperties;
 }
 
 export function Logo({ style }: LogoProps) {
-  const src = useImage("./logo-full.svg");
-
-  return <Img alt="featurectrl logo" src={src} style={style} />;
+  return <Img alt="featurectrl logo" src={imageSourceDataUrl} style={style} />;
 }
