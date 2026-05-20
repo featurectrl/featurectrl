@@ -52,7 +52,7 @@ export function SignUpForm() {
       password: values.password,
     });
 
-    await navigate({ to: "/select-organization" });
+    await navigate({ to: "/verify-email" });
   });
 
   return (
