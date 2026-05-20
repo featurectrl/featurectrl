@@ -1,5 +1,5 @@
-import { render } from "react-email";
-import { AssetProvider, createAttachmentCollector } from "./shared/assets-provider";
+import type { ReactElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { changeEmailTemplate } from "./templates/change-email-template";
 import { emailVerificationTemplate } from "./templates/email-verification-template";
 import { invitationTemplate } from "./templates/invitation-template";
@@ -29,20 +29,22 @@ export async function renderEmailTemplate<T extends TemplateName>(
 }> {
   const template = TEMPLATES[templateName] as EmailTemplate<TemplateProps<T>>;
 
-  const attachmentsCollector = createAttachmentCollector();
-
   const subject = template.subject(templateParameters);
   const text = template.bodyText(templateParameters);
-  const html = await render(
-    <AssetProvider attachmentsCollector={attachmentsCollector}>
-      <template.bodyHtml {...templateParameters} />
-    </AssetProvider>,
-  );
+  const html = renderJSX(<template.bodyHtml {...templateParameters} />);
 
   return {
     subject,
     text,
     html,
-    attachments: attachmentsCollector,
+    attachments: [],
   };
+}
+
+export function renderJSX(element: ReactElement): string {
+  const html = renderToStaticMarkup(element).replace(/<!DOCTYPE[^>]*>/i, "");
+  return `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+${html}
+`;
 }

@@ -1,30 +1,36 @@
-import clsx from "clsx";
-import type { ReactNode } from "react";
-import { Text as TextPrimitive } from "react-email";
+import type { CSSProperties, ReactNode } from "react";
+import { colors, textSize } from "@/emails/theming";
 
-type TextProps = {
+interface TextProps {
   muted?: boolean;
   size?: "xs" | "sm" | "base" | "2xl";
-  className?: string;
+  style?: CSSProperties;
   children: ReactNode;
-};
+}
 
-export function Text({ children, className, muted, size = "base" }: TextProps) {
+export function Text({ children, style, muted = false, size = "base" }: TextProps) {
   return (
-    <TextPrimitive
-      className={clsx(
-        "m-0",
-        {
-          "text-stone-500": muted,
-          "text-stone-700": !muted,
-          "text-xs": size === "xs",
-          "text-sm": size === "sm",
-          "text-base": size === "base",
-        },
-        className,
-      )}
+    <p
+      style={{
+        ...styles.root,
+        fontSize: textSize[size],
+        ...(muted ? styles.muted : styles.normal),
+        ...style,
+      }}
     >
       {children}
-    </TextPrimitive>
+    </p>
   );
 }
+
+const styles = {
+  root: {
+    margin: 0,
+  },
+  normal: {
+    color: colors.stone["700"],
+  },
+  muted: {
+    color: colors.stone["500"],
+  },
+} as const satisfies Record<string, CSSProperties>;

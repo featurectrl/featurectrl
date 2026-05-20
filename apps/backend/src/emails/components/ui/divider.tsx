@@ -1,22 +1,32 @@
-import clsx from "clsx";
-import { Hr } from "react-email";
+import type { CSSProperties } from "react";
+import { colors } from "@/emails/theming";
 
-type DividerProps = {
+interface DividerProps {
   dashed?: boolean;
-  className?: string;
-};
+  style?: CSSProperties;
+}
 
-export function Divider({ dashed, className }: DividerProps) {
+export function Divider({ dashed = false, style }: DividerProps) {
   return (
-    <Hr
-      className={clsx(
-        "border-0 border-t border-stone-200",
-        {
-          "border-solid": !dashed,
-          "border-dashed": dashed,
-        },
-        className,
-      )}
+    <hr
+      style={{
+        ...styles.root,
+        ...(dashed ? styles.dashed : {}),
+        ...style,
+      }}
     />
   );
 }
+
+const styles = {
+  root: {
+    border: "none",
+    borderTopWidth: "1px",
+    borderTopStyle: "solid",
+    borderTopColor: colors.stone["200"],
+  },
+
+  dashed: {
+    borderTopStyle: "dashed",
+  },
+} as const satisfies Record<string, CSSProperties>;

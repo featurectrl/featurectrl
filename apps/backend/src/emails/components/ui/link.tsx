@@ -1,17 +1,23 @@
-import clsx from "clsx";
-import type { ReactNode } from "react";
-import { Link as LinkPrimitive } from "react-email";
+import type { CSSProperties, ReactNode } from "react";
+import { colors } from "@/emails/theming";
 
-type LinkProps = {
+interface LinkProps {
   href: string;
-  className?: string;
+  style?: CSSProperties;
   children: ReactNode;
-};
+}
 
-export function Link({ href, className, children }: LinkProps) {
+export function Link({ href, style, children }: LinkProps) {
   return (
-    <LinkPrimitive href={href} className={clsx("text-blue-700 no-underline", className)}>
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{ ...styles.root, ...style }}>
       {children}
-    </LinkPrimitive>
+    </a>
   );
 }
+
+const styles = {
+  root: {
+    color: colors.blue["700"],
+    textDecoration: "none",
+  },
+} as const satisfies Record<string, CSSProperties>;

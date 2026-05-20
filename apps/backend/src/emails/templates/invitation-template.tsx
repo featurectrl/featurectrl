@@ -1,10 +1,14 @@
-import { Column, Row, Section } from "react-email";
+import type { CSSProperties } from "react";
 import { Layout } from "@/emails/components/layout";
 import { Button } from "@/emails/components/ui/button";
+import { Column } from "@/emails/components/ui/column";
 import { Divider } from "@/emails/components/ui/divider";
 import { Heading } from "@/emails/components/ui/heading";
 import { Link } from "@/emails/components/ui/link";
+import { Row } from "@/emails/components/ui/row";
+import { Section } from "@/emails/components/ui/section";
 import { Text } from "@/emails/components/ui/text";
+import { colors, textSize } from "@/emails/theming";
 import type { EmailTemplate } from "@/emails/types";
 
 export type InvitationEmailTemplateProps = {
@@ -35,7 +39,7 @@ function BodyHtml(props: InvitationEmailTemplateProps) {
 
   return (
     <Layout preview={`Join the ${props.organizationName} workspace on featurectrl.`}>
-      <Heading className="mb-2">
+      <Heading style={styles.heading}>
         {props.inviterName ? (
           <>
             {props.inviterName} invited you to {props.organizationName}.
@@ -45,51 +49,90 @@ function BodyHtml(props: InvitationEmailTemplateProps) {
         )}
       </Heading>
 
-      <Text className="mb-4">
+      <Text style={styles.intro}>
         {props.inviterName ? (
           <>
-            <span className="font-semibold">{props.inviterName}</span> added you to the{" "}
-            <span className="font-semibold">{props.organizationName}</span> on featurectrl. You'll
-            be able to manage feature flags alongside the team.
+            <span style={styles.bold}>{props.inviterName}</span> added you to the{" "}
+            <span style={styles.bold}>{props.organizationName}</span> on featurectrl. You'll be able
+            to manage feature flags alongside the team.
           </>
         ) : (
           <>
-            You've been added to the <span className="font-semibold">{props.organizationName}</span>{" "}
+            You've been added to the <span style={styles.bold}>{props.organizationName}</span>{" "}
             workspace on featurectrl. You'll be able to manage feature flags alongside the team.
           </>
         )}
       </Text>
 
-      <Section className="bg-stone-100 border border-solid border-stone-200 rounded-lg p-4 mb-4">
+      <Section style={styles.card}>
         <Row>
-          <Column className="w-10 pr-3">
-            <div className="size-10 rounded-lg bg-stone-900 text-stone-100 text-center text-base font-semibold leading-10">
-              {orgAvatarLetter}
-            </div>
+          <Column style={styles.avatarColumn}>
+            <div style={styles.avatar}>{orgAvatarLetter}</div>
           </Column>
 
           <Column>
-            <div className="text-base font-semibold text-stone-900">{props.organizationName}</div>
-            <div className="text-xs uppercase text-stone-500">Organization</div>
+            <div style={styles.orgName}>{props.organizationName}</div>
+            <div style={styles.orgLabel}>Organization</div>
           </Column>
         </Row>
       </Section>
 
       <Button href={props.url}>Accept invitation</Button>
 
-      <Divider className="my-6" />
+      <Divider style={styles.divider} />
 
       <Section>
         <Text size="sm" muted>
           Trouble with the button? Paste this URL into your browser
         </Text>
-        <Link href={props.url} className="text-sm break-all">
+        <Link href={props.url} style={styles.urlLink}>
           {props.url}
         </Link>
       </Section>
     </Layout>
   );
 }
+
+const styles = {
+  heading: { marginBottom: "8px" },
+  intro: { marginBottom: "16px" },
+  bold: { fontWeight: 600 },
+  card: {
+    backgroundColor: colors.stone["100"],
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: colors.stone["200"],
+    borderRadius: "8px",
+    padding: "16px",
+    marginBottom: "16px",
+  },
+  avatarColumn: {
+    width: "40px",
+    paddingRight: "12px",
+  },
+  avatar: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "8px",
+    backgroundColor: colors.stone["900"],
+    color: colors.stone["100"],
+    textAlign: "center",
+    fontSize: textSize.base,
+    fontWeight: 600,
+  },
+  orgName: {
+    fontSize: textSize.base,
+    fontWeight: 600,
+    color: colors.stone["900"],
+  },
+  orgLabel: {
+    fontSize: textSize.xs,
+    textTransform: "uppercase",
+    color: colors.stone["500"],
+  },
+  divider: { marginTop: "24px", marginBottom: "24px" },
+  urlLink: { fontSize: textSize.sm, wordBreak: "break-all" },
+} as const satisfies Record<string, CSSProperties>;
 
 export const invitationTemplate: EmailTemplate<InvitationEmailTemplateProps> = {
   subject,
