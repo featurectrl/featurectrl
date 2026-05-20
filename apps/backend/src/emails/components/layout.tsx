@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { colors, textSize } from "@/emails/theming";
 import { Logo } from "./logo";
 import { Column } from "./ui/column";
 import { Container } from "./ui/container";
@@ -19,19 +20,44 @@ export function Layout({ preview, children }: LayoutProps) {
         <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
         <meta name="x-apple-disable-message-reformatting" />
       </head>
-      <body className="bg-stone-100 font-sans text-base m-0 p-0 py-10">
+      <body style={styles.body}>
         {preview && <Preview>{preview}</Preview>}
 
-        <Section className="pb-10">
+        <Section style={styles.header}>
           <Row>
             <Column align="center">
-              <Logo className="h-10" />
+              <Logo style={styles.logo} />
             </Column>
           </Row>
         </Section>
 
-        <Container className="max-w-xl bg-white rounded-md p-8 mb-4">{children}</Container>
+        <Container style={styles.container}>{children}</Container>
       </body>
     </html>
   );
 }
+
+const styles = {
+  body: {
+    margin: 0,
+    padding: 0,
+    paddingTop: "40px",
+    paddingBottom: "40px",
+    backgroundColor: colors.stone["100"],
+    fontFamily: "sans-serif",
+    fontSize: textSize.base,
+  },
+  header: {
+    paddingBottom: "40px",
+  },
+  logo: {
+    height: "40px",
+  },
+  container: {
+    maxWidth: "576px",
+    backgroundColor: colors.white,
+    borderRadius: "6px",
+    padding: "32px",
+    marginBottom: "16px",
+  },
+} as const satisfies Record<string, CSSProperties>;

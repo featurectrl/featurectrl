@@ -1,31 +1,33 @@
-import clsx from "clsx";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { colors } from "@/emails/theming";
 
 interface ButtonProps {
   href: string;
-  className?: string;
+  style?: CSSProperties;
   children: ReactNode;
 }
 
-const BASE_STYLE = {
-  display: "inline-block",
-  lineHeight: "100%",
-  textDecoration: "none",
-} as const;
-
-export function Button({ href, className, children }: ButtonProps) {
+export function Button({ href, style, children }: ButtonProps) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={BASE_STYLE}
-      className={clsx(
-        "bg-blue-700 text-white no-underline font-medium px-6 py-4 rounded-md tracking-tight",
-        className,
-      )}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{ ...styles.root, ...style }}>
       {children}
     </a>
   );
 }
+
+const styles = {
+  root: {
+    display: "inline-block",
+    lineHeight: "100%",
+    textDecoration: "none",
+    background: colors.blue["500"],
+    color: colors.white,
+    fontWeight: 500,
+    letterSpacing: "-0.025em",
+    paddingLeft: "24px",
+    paddingRight: "24px",
+    paddingTop: "16px",
+    paddingBottom: "16px",
+    borderRadius: "8px",
+  },
+} as const satisfies Record<string, CSSProperties>;

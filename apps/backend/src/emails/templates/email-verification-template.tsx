@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Layout } from "@/emails/components/layout";
 import { Button } from "@/emails/components/ui/button";
 import { Divider } from "@/emails/components/ui/divider";
@@ -5,6 +6,7 @@ import { Heading } from "@/emails/components/ui/heading";
 import { Link } from "@/emails/components/ui/link";
 import { Section } from "@/emails/components/ui/section";
 import { Text } from "@/emails/components/ui/text";
+import { textSize } from "@/emails/theming";
 import type { EmailTemplate } from "@/emails/types";
 
 export type EmailVerificationEmailTemplateProps = {
@@ -27,28 +29,36 @@ If you didn't sign up, you can safely ignore this message.
 function BodyHtml(props: EmailVerificationEmailTemplateProps) {
   return (
     <Layout preview="Confirm your email to finish setting up your account.">
-      <Heading className="mb-2">Verify your email</Heading>
+      <Heading style={styles.heading}>Verify your email</Heading>
 
-      <Text className="mb-4">
-        Confirm <span className="font-semibold">{props.email}</span> belongs to you by clicking the
-        button below.
+      <Text style={styles.intro}>
+        Confirm <span style={styles.bold}>{props.email}</span> belongs to you by clicking the button
+        below.
       </Text>
 
       <Button href={props.url}>Verify email</Button>
 
-      <Divider className="my-6" />
+      <Divider style={styles.divider} />
 
       <Section>
         <Text size="sm" muted>
           Trouble with the button? Paste this URL into your browser
         </Text>
-        <Link href={props.url} className="text-sm break-all">
+        <Link href={props.url} style={styles.urlLink}>
           {props.url}
         </Link>
       </Section>
     </Layout>
   );
 }
+
+const styles = {
+  heading: { marginBottom: "8px" },
+  intro: { marginBottom: "16px" },
+  bold: { fontWeight: 600 },
+  divider: { marginTop: "24px", marginBottom: "24px" },
+  urlLink: { fontSize: textSize.sm, wordBreak: "break-all" },
+} as const satisfies Record<string, CSSProperties>;
 
 export const emailVerificationTemplate: EmailTemplate<EmailVerificationEmailTemplateProps> = {
   subject,

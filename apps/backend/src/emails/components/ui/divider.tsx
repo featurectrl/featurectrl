@@ -1,21 +1,32 @@
-import clsx from "clsx";
+import type { CSSProperties } from "react";
+import { colors } from "@/emails/theming";
 
 interface DividerProps {
   dashed?: boolean;
-  className?: string;
+  style?: CSSProperties;
 }
 
-export function Divider({ dashed, className }: DividerProps) {
+export function Divider({ dashed = false, style }: DividerProps) {
   return (
     <hr
-      className={clsx(
-        "border-0 border-t border-stone-200",
-        {
-          "border-solid": !dashed,
-          "border-dashed": dashed,
-        },
-        className,
-      )}
+      style={{
+        ...styles.root,
+        ...(dashed ? styles.dashed : {}),
+        ...style,
+      }}
     />
   );
 }
+
+const styles = {
+  root: {
+    border: "none",
+    borderTopWidth: "1px",
+    borderTopStyle: "solid",
+    borderTopColor: colors.stone["200"],
+  },
+
+  dashed: {
+    borderTopStyle: "dashed",
+  },
+} as const satisfies Record<string, CSSProperties>;

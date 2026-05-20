@@ -1,1 +1,0 @@
-export { renderJSX } from "./render";

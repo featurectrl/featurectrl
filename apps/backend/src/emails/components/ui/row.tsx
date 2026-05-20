@@ -1,12 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
 
 interface RowProps {
-  className?: string;
   style?: CSSProperties;
   children: ReactNode;
 }
 
-export function Row({ className, style, children }: RowProps) {
+export function Row({ style, children }: RowProps) {
   return (
     <table
       align="center"
@@ -15,12 +14,20 @@ export function Row({ className, style, children }: RowProps) {
       cellPadding="0"
       cellSpacing="0"
       role="presentation"
-      className={className}
       style={style}
     >
-      <tbody style={{ width: "100%" }}>
-        <tr style={{ width: "100%" }}>{children}</tr>
+      <tbody style={styles.body}>
+        <tr style={styles.row}>{children}</tr>
       </tbody>
     </table>
   );
 }
+
+const styles = {
+  body: {
+    width: "100%",
+  },
+  row: {
+    width: "100%",
+  },
+} as const satisfies Record<string, CSSProperties>;

@@ -1,12 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
 
 interface SectionProps {
-  className?: string;
   style?: CSSProperties;
   children: ReactNode;
 }
 
-export function Section({ className, style, children }: SectionProps) {
+export function Section({ style, children }: SectionProps) {
   return (
     <table
       align="center"
@@ -15,7 +14,6 @@ export function Section({ className, style, children }: SectionProps) {
       cellPadding="0"
       cellSpacing="0"
       role="presentation"
-      className={className}
       style={style}
     >
       <tbody>

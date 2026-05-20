@@ -1,21 +1,25 @@
-import clsx from "clsx";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { colors } from "@/emails/theming";
 import { Section } from "./section";
 
 interface NoticeProps {
-  className?: string;
+  style?: CSSProperties;
   children: ReactNode;
 }
 
-export function Notice({ className, children }: NoticeProps) {
-  return (
-    <Section
-      className={clsx(
-        "bg-stone-50 border border-solid border-stone-200 border-l-4 border-l-stone-400 rounded p-3",
-        className,
-      )}
-    >
-      {children}
-    </Section>
-  );
+export function Notice({ style, children }: NoticeProps) {
+  return <Section style={{ ...styles.root, ...style }}>{children}</Section>;
 }
+
+const styles = {
+  root: {
+    backgroundColor: colors.stone["50"],
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: colors.stone["200"],
+    borderLeftWidth: "4px",
+    borderLeftColor: colors.stone["400"],
+    borderRadius: "4px",
+    padding: "12px",
+  },
+} as const satisfies Record<string, CSSProperties>;

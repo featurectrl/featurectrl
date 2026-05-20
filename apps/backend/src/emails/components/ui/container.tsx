@@ -1,12 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
 
 interface ContainerProps {
-  className?: string;
   style?: CSSProperties;
   children: ReactNode;
 }
 
-export function Container({ className, style, children }: ContainerProps) {
+export function Container({ style, children }: ContainerProps) {
   return (
     <table
       align="center"
@@ -15,14 +14,20 @@ export function Container({ className, style, children }: ContainerProps) {
       cellPadding="0"
       cellSpacing="0"
       role="presentation"
-      className={className}
-      style={style}
+      style={{ ...styles.root, ...style }}
     >
       <tbody>
-        <tr style={{ width: "100%" }}>
+        <tr style={styles.row}>
           <td>{children}</td>
         </tr>
       </tbody>
     </table>
   );
 }
+
+const styles = {
+  root: {},
+  row: {
+    width: "100%",
+  },
+} as const satisfies Record<string, CSSProperties>;

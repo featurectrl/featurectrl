@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Layout } from "@/emails/components/layout";
 import { Button } from "@/emails/components/ui/button";
 import { Column } from "@/emails/components/ui/column";
@@ -8,6 +9,7 @@ import { Notice } from "@/emails/components/ui/notice";
 import { Row } from "@/emails/components/ui/row";
 import { Section } from "@/emails/components/ui/section";
 import { Text } from "@/emails/components/ui/text";
+import { colors, textSize } from "@/emails/theming";
 import type { EmailTemplate } from "@/emails/types";
 
 export type ChangeEmailEmailTemplateProps = {
@@ -32,24 +34,18 @@ ${props.url}
 function BodyHtml(props: ChangeEmailEmailTemplateProps) {
   return (
     <Layout preview="Confirm the change to finish updating your account.">
-      <Heading className="mb-2">Confirm your new email</Heading>
-      <Text className="mb-4">
+      <Heading style={styles.heading}>Confirm your new email</Heading>
+      <Text style={styles.intro}>
         You asked to change the email on your featurectrl account. Confirm below to make{" "}
-        <span className="font-semibold">{props.newEmail}</span> the new sign-in address.
+        <span style={styles.bold}>{props.newEmail}</span> the new sign-in address.
       </Text>
 
-      <Section className="bg-stone-100 border border-solid border-stone-200 rounded-lg p-4 mb-6">
+      <Section style={styles.summary}>
         <Row>
-          <Column
-            valign="middle"
-            className="text-xs uppercase tracking-wider text-stone-400 font-medium w-16 py-1"
-          >
+          <Column valign="middle" style={styles.summaryLabel}>
             From
           </Column>
-          <Column
-            valign="middle"
-            className="text-sm text-stone-400 font-medium line-through py-1 break-all"
-          >
+          <Column valign="middle" style={styles.summaryFrom}>
             {props.currentEmail}
           </Column>
         </Row>
@@ -61,18 +57,11 @@ function BodyHtml(props: ChangeEmailEmailTemplateProps) {
         </Row>
 
         <Row>
-          <Column
-            valign="middle"
-            className="text-xs uppercase tracking-wider text-stone-400 font-medium w-16 py-1"
-          >
+          <Column valign="middle" style={styles.summaryLabel}>
             To
           </Column>
 
-          <Column
-            align="left"
-            valign="middle"
-            className="text-sm text-stone-900 font-medium py-1 break-all"
-          >
+          <Column align="left" valign="middle" style={styles.summaryTo}>
             {props.newEmail}
           </Column>
         </Row>
@@ -80,26 +69,71 @@ function BodyHtml(props: ChangeEmailEmailTemplateProps) {
 
       <Button href={props.url}>Confirm new email</Button>
 
-      <Notice className="mt-6">
+      <Notice style={styles.notice}>
         <Text>
-          <span className="font-semibold">Not you?</span> Don't confirm. Your old address{" "}
-          <span className="font-semibold">{props.currentEmail}</span> stays active.
+          <span style={styles.bold}>Not you?</span> Don't confirm. Your old address{" "}
+          <span style={styles.bold}>{props.currentEmail}</span> stays active.
         </Text>
       </Notice>
 
-      <Divider className="my-6" />
+      <Divider style={styles.divider} />
 
       <Section>
         <Text size="sm" muted>
           Trouble with the button? Paste this URL into your browser
         </Text>
-        <Link href={props.url} className="text-sm break-all">
+        <Link href={props.url} style={styles.urlLink}>
           {props.url}
         </Link>
       </Section>
     </Layout>
   );
 }
+
+const styles = {
+  heading: { marginBottom: "8px" },
+  intro: { marginBottom: "16px" },
+  bold: { fontWeight: 600 },
+  summary: {
+    backgroundColor: colors.stone["100"],
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: colors.stone["200"],
+    borderRadius: "8px",
+    padding: "16px",
+    marginBottom: "24px",
+  },
+  summaryLabel: {
+    fontSize: textSize.xs,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    color: colors.stone["400"],
+    fontWeight: 500,
+    width: "64px",
+    paddingTop: "4px",
+    paddingBottom: "4px",
+  },
+  summaryFrom: {
+    fontSize: textSize.sm,
+    color: colors.stone["400"],
+    fontWeight: 500,
+    textDecoration: "line-through",
+    paddingTop: "4px",
+    paddingBottom: "4px",
+    wordBreak: "break-all",
+  },
+  summaryTo: {
+    fontSize: textSize.sm,
+    color: colors.stone["900"],
+    fontWeight: 500,
+    paddingTop: "4px",
+    paddingBottom: "4px",
+    wordBreak: "break-all",
+  },
+  notice: { marginTop: "24px" },
+  divider: { marginTop: "24px", marginBottom: "24px" },
+  urlLink: { fontSize: textSize.sm, wordBreak: "break-all" },
+} as const satisfies Record<string, CSSProperties>;
 
 export const changeEmailTemplate: EmailTemplate<ChangeEmailEmailTemplateProps> = {
   subject,
