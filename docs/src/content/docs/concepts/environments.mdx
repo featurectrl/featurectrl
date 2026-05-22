@@ -1,0 +1,16 @@
+---
+title: Environments
+description: Environments are "shipping destinations".
+---
+
+An **environment** is a scope that you ship to, e.g., `production`, `staging`, `dev`, `preview-42`.
+
+A feature flag value is always set per environment. So a single feature flag can be set:
+- `on` in `staging` env
+- `on for internal users` in `preview` env
+- `off` in `production` env
+
+## How to create an environment
+
+By default, there are `production` and `staging` environments, but they can be changed on the platform settings page
+There's no way to configure them from the code as they're decisions about your infrastructure topology, not your app.

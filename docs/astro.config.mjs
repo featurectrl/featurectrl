@@ -17,9 +17,32 @@ export default defineConfig({
       },
       social: [
         {icon: 'github', label: 'GitHub', href: 'https://github.com/featurectrl/featurectrl'},
-        {icon: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com/company/featurectrl'},
       ],
       sidebar: [
+        { label: 'What is featurectrl', link: '/' },
+        {
+          label: 'Quickstart',
+          items: [
+            { label: 'Platform setup', slug: 'quickstart/platform-setup' },
+            { label: 'SDK setup', slug: 'quickstart/sdk-setup' },
+          ],
+        },
+        {
+          label: 'Concepts',
+          items: [
+            { label: 'Flag lifecycle', slug: 'concepts/flag-lifecycle' },
+            { label: 'Targeting and rollout', slug: 'concepts/targeting-and-rollout' },
+            { label: 'Apps', slug: 'concepts/apps' },
+            { label: 'Environments', slug: 'concepts/environments' },
+          ],
+        },
+        {
+          label: 'SDKs',
+          items: [
+            { label: 'TypeScript / JavaScript', slug: 'sdks/javascript' },
+            { label: 'Python', slug: 'sdks/python' },
+          ],
+        },
       ],
     }),
   ],

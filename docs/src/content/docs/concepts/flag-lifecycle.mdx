@@ -1,0 +1,56 @@
+---
+title: Flag lifecycle
+description: How flags are created, evaluated, and deleted.
+---
+
+A feature flag is being created as soon as something declares it and can be archived only when nothing references it anymore.
+
+## Creating a feature flag
+
+You declare a flag in your `featurectrl.config.json`:
+
+```json lines
+{
+  // ...
+  "flags": {
+    "new-checkout": {
+      "defaultValue": { "enabled": false },
+      "description": "Render the redesigned checkout flow"
+    }
+  },
+  // ...
+}
+```
+
+`defaultValue` is what the flag returns in any environment where you haven't set a value.
+
+The next step is submitting the feature flag to the featurectrl platform. Running:
+
+```shell
+featurectrl submit
+```
+
+uploads the config to the platform. The flag will be created if it doesn't exist,
+or the default value and description will be updated for the existing one.
+
+The upload is **idempotent and exact**: the flags in the config are the flags this app uses.
+Anything previously connected to this app but missing from the config
+is disconnected — it stays in the platform but is no longer counted as in-use by this app.
+
+## Toggling on/off
+
+After submitting, the flag appears on the platform and can be seen in the dashboard.
+The value for a specific environment can be set from the dashboard.
+
+Flags can be toggled for everyone or for specific segments – i.e. internal users or beta users.
+
+## Archiving
+
+When a flag is no longer used in the app (e.g. the feature has shipped, the experiment has ended),
+it can be archived from the dashboard.
+
+The process is:
+
+1. Remove the flag from `featurectrl.config.json` (and from the code).
+2. Re-submit config. The flag should get `outdated` badge next to it in the dashboard.
+3. Archive the flag from the dashboard. This will remove it from both the UI and the runtime API.

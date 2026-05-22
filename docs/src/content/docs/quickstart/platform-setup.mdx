@@ -1,0 +1,80 @@
+---
+title: Platform setup
+description: Run featurectrl locally with Docker Compose in about a minute.
+---
+
+The only thing you need is Docker. The standalone image ships both the API and the web dashboard in one container.
+
+## Setup
+
+Create an `.env` file
+
+```shell
+# Public origin where platform can be accessed
+ORIGIN=http://localhost:3000
+
+# Must be a 32-byte random value. Generate using: openssl rand -base64 32
+BETTER_AUTH_SECRET=replace-with-32-byte-random-secret
+
+# From address for emails from the platform
+EMAIL_FROM=from@featurectrl.io
+
+# SMTP server to use for sending the emails
+EMAIL_BACKEND_URL=smtp://username:password@smtp.server.com:25
+
+# Optional OAuth providers — set both ID and SECRET for a provider to enable it.
+# When unset, the provider is hidden from the login page.
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+Create a `docker-compose.yml` file
+
+```yaml
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: featurectrl
+      POSTGRES_PASSWORD: featurectrl
+      POSTGRES_DB: featurectrl
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U featurectrl -d featurectrl"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - featurectrl-db:/var/lib/postgresql/data
+
+  migrate:
+    image: featurectrl/featurectrl:latest
+    command: ["db:migrate"]
+    environment:
+      DATABASE_URL: postgres://featurectrl:featurectrl@db:5432/featurectrl
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    image: featurectrl/featurectrl:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://featurectrl:featurectrl@db:5432/featurectrl
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  featurectrl-db:
+```
+
+Open `http://localhost:3000` and sign up. The first account in a fresh database creates your organization.

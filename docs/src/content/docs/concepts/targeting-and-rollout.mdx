@@ -1,0 +1,48 @@
+---
+title: Segment targeting
+description: How segments target flags to subsets of users
+---
+
+Conceptually, every feature flag is boolean and always either enabled or disabled for the specific user.
+However, featurectrl allows you to target specific user segments to enable or disable feature flags
+for only specific user groups.
+
+In the dashboard when setting the feature flag value, you can select:
+ * **Enabled for everyone**
+ * **Enabled only for ...** will require you to choose user segments for whom the feature flag is enabled. Everyone else will get a "disabled" stage.
+ * **Disabled for everyone**
+
+featurectrl **DOES NOT** evaluate targeting rules for a user on server-side, instead, segments are defined in *the application code* at `.identify()` call. For example:
+
+```ts
+client.identify({
+  id: "user_123",
+  segments: ["beta", "internal"],
+});
+```
+
+## Percentage rollouts
+
+:::note[Coming soon]
+featurectrl doesn't currently support percentage rollouts, but it is on the roadmap.
+:::
+
+
+## Multivariate (enum) feature flags
+
+featurectrl doesn't support multivariate flags. The predominant need for multivariate flags comes from A/B experiments,
+and fundamentally, we don't believe they must be combined into the same feature flag concept.
+
+A walkaround when you need to do this is having two feature flags instead of one:
+
+```ts
+if (client.isEnabled("checkout-variant-a")) {
+  // variant A
+} else if (client.isEnabled("checkout-variant-b")) {
+  // variant B
+} else {
+  // default variant
+}
+```
+
+It's less pretty than `client.variation("checkout", "a")`, but there are very few cases when you actually need it.

@@ -1,0 +1,27 @@
+---
+title: What is featurectrl
+description: An opinionated, code-first, type-safe feature flag platform built around developer experience.
+---
+
+**featurectrl** is an opinionated open-source feature flag management platform designed with engineers' experience in mind.
+
+Software engineers are the core users of feature flags, and their experience must come first. That's why featurectrl is designed differently from other platforms.
+
+* Code-first — flags are defined in code, published to the platform in CI.
+* Type-safe — not just to catch bugs, but because types *are* DX.
+* Simple — flags are flags, not JSONs. Less complexity, better UX, better DX.
+* Open-source — know what you're running and self-host whenever it matters.
+
+## Concepts
+
+- **[App](/concepts/apps/)** — an application (think of it as a project). It groups feature flags and segments, especially useful when you have more than one application.
+- **[Flag](/concepts/flag-lifecycle/)** — a feature flag. Always a boolean toggle. It has a default value that can be overridden for each environment.
+- **[Environment](/concepts/environments/)** — a named scope you ship to (e.g. `production`, `staging`, `dev`).
+- **[Segment](/concepts/targeting-and-rollout/)** — a named group of users (e.g. `beta`, `internal`). Lets you enable a flag for a specific group rather than everyone in an environment.
+
+## How it works
+
+1. Install and integrate the featurectrl SDK in your project.
+2. Declare your feature flags and segments in a `featurectrl.config.json` file.
+3. Push your configuration to the platform on deploy using the CLI.
+4. Use the featurectrl dashboard to enable/disable feature flags per environment.
