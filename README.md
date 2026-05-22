@@ -15,6 +15,8 @@ Define flags in your code, toggle them per environment from a dashboard, and tar
 
 > A hosted version is coming soon. For now, featurectrl is self-hosted.
 
+**Documentation:** see [`docs/`](./docs) (Nextra site — `make docs-dev` to run locally).
+
 ## Features
 
 - Feature flags with optional segment-based targeting
@@ -109,11 +111,11 @@ Open <http://localhost:3000>, create the first account, and you're in.
 
 ## SDKs
 
-| Language                | Repository    |
-|-------------------------|---------------|
-| JavaScript / TypeScript | `Coming soon` |
-| Python                  | `Coming soon` |
-| Go                      | `Coming soon` |
+| Language                | Repository                                                                    |
+|-------------------------|-------------------------------------------------------------------------------|
+| JavaScript / TypeScript | [`featurectrl/javascript-sdk`](https://github.com/featurectrl/javascript-sdk) |
+| Python                  | `Coming soon`                                                                 |
+| Go                      | `Coming soon`                                                                 |
 
 ## Local development
 
