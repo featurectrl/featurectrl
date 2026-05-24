@@ -1,0 +1,68 @@
+name: Release CLI
+
+on:
+  push:
+    tags: ['cli-v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and release CLI
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-cli-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26'
+          check-latest: true
+          cache-dependency-path: cli/go.sum
+
+      - name: Compute version
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#cli-v}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+          case "$VERSION" in
+            *-*) echo "prerelease=true"  >> "$GITHUB_OUTPUT" ;;
+            *)   echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Build release artifacts
+        working-directory: cli
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          COMMIT: ${{ github.sha }}
+          BUILD_DATE: ${{ steps.version.outputs.build_date }}
+        run: ./scripts/build-release.sh
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          EXTRA=""
+          PREVIOUS=$(git tag --list 'cli-v*' --sort=-version:refname | grep -v "^${TAG}$" | head -n1 || true)
+          if [ -n "$PREVIOUS" ]; then
+            EXTRA="$EXTRA --notes-start-tag $PREVIOUS"
+          fi
+          if [ "$PRERELEASE" = "true" ]; then
+            EXTRA="$EXTRA --prerelease"
+          fi
+          # shellcheck disable=SC2086
+          gh release create "$TAG" \
+            --title "CLI $TAG" \
+            --generate-notes \
+            $EXTRA \
+            cli/dist/*.tar.gz cli/dist/checksums.txt
