@@ -23,9 +23,8 @@ jobs:
       postgres:
         image: postgres:alpine
         env:
-          POSTGRES_USER: featurectrl
-          POSTGRES_PASSWORD: featurectrl
-          POSTGRES_DB: featurectrl_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -40,11 +39,14 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Demote db role so RLS is enforced (superusers bypass RLS)
+      - name: Create test role and database
         env:
-          PGPASSWORD: featurectrl
-        run: psql -h localhost -U featurectrl -d featurectrl_test -c "ALTER ROLE featurectrl NOSUPERUSER;"
-
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE featurectrl WITH LOGIN PASSWORD 'featurectrl';
+          CREATE DATABASE featurectrl_test OWNER featurectrl;
+          SQL
       - run: bun install --frozen-lockfile
       - name: Apply migrations to test database
         run: DATABASE_URL=$TEST_DATABASE_URL bun run db:migrate
