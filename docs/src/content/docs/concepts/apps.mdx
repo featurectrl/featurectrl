@@ -1,0 +1,30 @@
+---
+title: Apps
+description: Apps are named "client surfaces" that help you with feature flag management.
+---
+
+An **app** in featurectrl is a named client surface. You can define apps as you like for your project, they exist purely for grouping and simplifying flags management purpose.
+
+## How it works
+
+An app *connects to* feature flags and segments, but it doesn't own them. Some flags can be shared between multiple apps, and all apps will see the same flag value per environment.
+
+Where apps are helpful:
+- Having multiple apps (i.e., one for frontend, one for backend) helps in managing feature flags and to find and delete outdated flags easier.
+- Feature flags can be filtered per application in the dashboard, which simplifies feature flag management in bigger projects.
+
+## How to create an app
+
+There's no way to manually create an app from the dashboard. Instead, it is created via CLI by publishing app config:
+
+```shell
+featurectrl submit
+```
+
+The app name is part of `featurectrl.config.json`. The server will create or update the app and ensure that it is connected to **exactly** the lists in the config - all outdated connections will be removed.
+
+## One app vs. many apps
+
+- **One app for a monorepo** works. All packages share the same config - less configuration, less complexity.
+- Another common use case is **one app per repo/service**. Stick to it when your `webapp` and your `api` are separate apps possibly living in different repos.
+- **Multiple apps per single repo/service** isn't a common pattern, but can be an option when you have very different surfaces.

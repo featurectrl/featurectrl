@@ -11,9 +11,9 @@
 ---
 
 **featurectrl** is an open-source feature flag solution designed to make feature flags type safe yet simple.
-Define flags in your code, toggle them per environment from a dashboard, and target subsets of users with segments.
+Define flags in your code, toggle them per environment from a dashboard, and target users using user segments.
 
-> A hosted version is coming soon. For now, featurectrl is self-hosted.
+[Documentation](https://docs.featurectrl.io)
 
 ## Features
 
@@ -109,11 +109,11 @@ Open <http://localhost:3000>, create the first account, and you're in.
 
 ## SDKs
 
-| Language                | Repository    |
-|-------------------------|---------------|
-| JavaScript / TypeScript | `Coming soon` |
-| Python                  | `Coming soon` |
-| Go                      | `Coming soon` |
+| Language                | Repository                                                                    |
+|-------------------------|-------------------------------------------------------------------------------|
+| JavaScript / TypeScript | [`featurectrl/javascript-sdk`](https://github.com/featurectrl/javascript-sdk) |
+| Python                  | `Coming soon`                                                                 |
+| Go                      | `Coming soon`                                                                 |
 
 ## Local development
 

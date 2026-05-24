@@ -1,13 +1,14 @@
-.PHONY: install install-backend install-web dev dev-backend dev-web \
+.PHONY: install install-backend install-web docs-install dev dev-backend dev-web \
         build build-backend build-web build-types \
         lint lint-backend lint-web format format-backend format-web \
         check-types check-types-backend check-types-web \
-        db-seed db-reset docker-standalone
+        db-seed db-reset docker-standalone docs-dev docs-build
 
 .SILENT:
 
 BACKEND = 2>&1 | awk '{ print "[backend] " $$0; fflush() }'
 WEB     = 2>&1 | awk '{ print "[web] " $$0; fflush() }'
+DOCS    = 2>&1 | awk '{ print "[docs] " $$0; fflush() }'
 
 install:
 	$(MAKE) -j2 install-backend install-web
@@ -77,3 +78,12 @@ build-docker-images:
 
 release:
 	tools/release.sh
+
+docs-install:
+	cd docs && bun install $(DOCS)
+
+docs-dev:
+	cd docs && bun run dev $(DOCS)
+
+docs-build:
+	cd docs && bun run build $(DOCS)
