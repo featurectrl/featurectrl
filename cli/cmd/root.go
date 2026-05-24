@@ -3,7 +3,7 @@ package cmd
 import "github.com/spf13/cobra"
 
 var RootCmd = &cobra.Command{
-	Use:           "featurectrl",
-	Short:         "featurectrl CLI",
-	SilenceUsage:  true,
+	Use:          "featurectrl",
+	Short:        "featurectrl CLI",
+	SilenceUsage: true,
 }
