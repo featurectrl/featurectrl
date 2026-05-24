@@ -1,3 +1,14 @@
+CREATE TABLE "api_key" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"organization_id" uuid NOT NULL,
+	"display_name" text NOT NULL,
+	"public_key" text NOT NULL,
+	"private_key" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "api_key_public_key_unique" UNIQUE("public_key"),
+	CONSTRAINT "api_key_private_key_unique" UNIQUE("private_key")
+);
+--> statement-breakpoint
 CREATE TABLE "app" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"organization_id" uuid NOT NULL,
@@ -72,17 +83,6 @@ CREATE TABLE "user_segment" (
 );
 --> statement-breakpoint
 ALTER TABLE "user_segment" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
-CREATE TABLE "api_key" (
-	"id" uuid PRIMARY KEY NOT NULL,
-	"organization_id" uuid NOT NULL,
-	"display_name" text NOT NULL,
-	"public_key" text NOT NULL,
-	"private_key" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "api_key_public_key_unique" UNIQUE("public_key"),
-	CONSTRAINT "api_key_private_key_unique" UNIQUE("private_key")
-);
---> statement-breakpoint
 CREATE TABLE "account" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -161,6 +161,7 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "api_key" ADD CONSTRAINT "api_key_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app" ADD CONSTRAINT "app_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_feature_flag_connection" ADD CONSTRAINT "app_feature_flag_connection_app_id_app_id_fk" FOREIGN KEY ("app_id") REFERENCES "public"."app"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_feature_flag_connection" ADD CONSTRAINT "app_feature_flag_connection_feature_flag_id_feature_flag_id_fk" FOREIGN KEY ("feature_flag_id") REFERENCES "public"."feature_flag"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -174,7 +175,6 @@ ALTER TABLE "feature_flag_value" ADD CONSTRAINT "feature_flag_value_organization
 ALTER TABLE "feature_flag_value" ADD CONSTRAINT "feature_flag_value_feature_flag_id_feature_flag_id_fk" FOREIGN KEY ("feature_flag_id") REFERENCES "public"."feature_flag"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "feature_flag_value" ADD CONSTRAINT "feature_flag_value_environment_id_environment_id_fk" FOREIGN KEY ("environment_id") REFERENCES "public"."environment"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_segment" ADD CONSTRAINT "user_segment_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "api_key" ADD CONSTRAINT "api_key_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -187,4 +187,12 @@ CREATE POLICY "app_user_segment_connection_organization_isolation" ON "app_user_
 CREATE POLICY "environment_organization_isolation" ON "environment" AS PERMISSIVE FOR ALL TO public USING (organization_id = current_setting('app.current_organization_id', true)::uuid) WITH CHECK (organization_id = current_setting('app.current_organization_id', true)::uuid);--> statement-breakpoint
 CREATE POLICY "feature_flag_organization_isolation" ON "feature_flag" AS PERMISSIVE FOR ALL TO public USING (organization_id = current_setting('app.current_organization_id', true)::uuid) WITH CHECK (organization_id = current_setting('app.current_organization_id', true)::uuid);--> statement-breakpoint
 CREATE POLICY "feature_flag_value_organization_isolation" ON "feature_flag_value" AS PERMISSIVE FOR ALL TO public USING (organization_id = current_setting('app.current_organization_id', true)::uuid) WITH CHECK (organization_id = current_setting('app.current_organization_id', true)::uuid);--> statement-breakpoint
-CREATE POLICY "user_segment_organization_isolation" ON "user_segment" AS PERMISSIVE FOR ALL TO public USING (organization_id = current_setting('app.current_organization_id', true)::uuid) WITH CHECK (organization_id = current_setting('app.current_organization_id', true)::uuid);
+CREATE POLICY "user_segment_organization_isolation" ON "user_segment" AS PERMISSIVE FOR ALL TO public USING (organization_id = current_setting('app.current_organization_id', true)::uuid) WITH CHECK (organization_id = current_setting('app.current_organization_id', true)::uuid);--> statement-breakpoint
+
+ALTER TABLE "app" FORCE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "app_feature_flag_connection" FORCE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "app_user_segment_connection" FORCE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "environment" FORCE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "feature_flag" FORCE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "feature_flag_value" FORCE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "user_segment" FORCE ROW LEVEL SECURITY;
