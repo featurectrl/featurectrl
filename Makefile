@@ -79,6 +79,9 @@ build-docker-images:
 release:
 	tools/release.sh
 
+release-cli:
+	tools/release-cli.sh
+
 docs-install:
 	cd docs && bun install $(DOCS)
 
