@@ -11,11 +11,9 @@
 ---
 
 **featurectrl** is an open-source feature flag solution designed to make feature flags type safe yet simple.
-Define flags in your code, toggle them per environment from a dashboard, and target subsets of users with segments.
+Define flags in your code, toggle them per environment from a dashboard, and target users using user segments.
 
-> A hosted version is coming soon. For now, featurectrl is self-hosted.
-
-**Documentation:** see [`docs/`](./docs) (Nextra site — `make docs-dev` to run locally).
+[Documentation](https://docs.featurectrl.io)
 
 ## Features
 
