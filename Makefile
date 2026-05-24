@@ -2,7 +2,8 @@
         build build-backend build-web build-types \
         lint lint-backend lint-web format format-backend format-web \
         check-types check-types-backend check-types-web \
-        db-seed db-reset docker-standalone docs-dev docs-build
+        db-seed db-reset docker-standalone docs-dev docs-build \
+        release release-cli
 
 .SILENT:
 
