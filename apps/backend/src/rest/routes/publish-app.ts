@@ -47,7 +47,7 @@ export const publishAppRoute: FastifyPluginAsync = async (fastify) => {
         .insert(app)
         .values({ id: uuidv7(), organizationId, name: appName })
         .onConflictDoUpdate({
-          target: [app.name],
+          target: [app.organizationId, app.name],
           set: { updatedAt: sql`now()` },
         })
         .returning();
@@ -66,7 +66,7 @@ export const publishAppRoute: FastifyPluginAsync = async (fastify) => {
                 })),
               )
               .onConflictDoUpdate({
-                target: [featureFlag.name],
+                target: [featureFlag.organizationId, featureFlag.name],
                 set: {
                   description: sql`excluded.description`,
                 },
@@ -86,7 +86,7 @@ export const publishAppRoute: FastifyPluginAsync = async (fastify) => {
                 })),
               )
               .onConflictDoUpdate({
-                target: [userSegment.name],
+                target: [userSegment.organizationId, userSegment.name],
                 set: { name: sql`excluded.name` },
               })
               .returning()
