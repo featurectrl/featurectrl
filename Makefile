@@ -2,6 +2,7 @@
         build build-backend build-web build-types \
         lint lint-backend lint-web format format-backend format-web \
         check-types check-types-backend check-types-web \
+        test test-backend \
         db-seed db-reset docker-standalone docs-dev docs-build \
         release release-cli
 
@@ -67,6 +68,12 @@ check-types-backend:
 
 check-types-web:
 	cd apps/web && bun run check-types $(WEB)
+
+test:
+	$(MAKE) test-backend
+
+test-backend:
+	cd apps/backend && bun run test $(BACKEND)
 
 db-seed:
 	cd apps/backend && bun run db:seed $(BACKEND)

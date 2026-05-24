@@ -1,7 +1,9 @@
-name: CI
+name: Lint
 
 on:
   pull_request:
+    paths:
+      - apps/
   push:
     branches: [main]
 
