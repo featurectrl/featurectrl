@@ -1,7 +1,13 @@
 package main
 
-import "github.com/featurectrl/featurectrl/cli/cmd"
+import (
+	"os"
+
+	"github.com/featurectrl/featurectrl/cli/cmd"
+)
 
 func main() {
-	cmd.RootCmd.Execute()
+	if err := cmd.RootCmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
