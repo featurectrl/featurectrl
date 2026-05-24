@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { RestError } from "./errors";
 import { publicEnvironmentRoute } from "./routes/public-environment";
-import { submitConfigRoute } from "./routes/submit-config";
+import { publishAppRoute } from "./routes/publish-app";
 
 export const restPlugin: FastifyPluginAsync = async (fastify) => {
   fastify.setErrorHandler((error, _req, reply) => {
@@ -13,6 +13,6 @@ export const restPlugin: FastifyPluginAsync = async (fastify) => {
     reply.status(500).send({ error: "Internal Server Error" });
   });
 
-  await fastify.register(submitConfigRoute);
+  await fastify.register(publishAppRoute);
   await fastify.register(publicEnvironmentRoute);
 };
