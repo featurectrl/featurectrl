@@ -16,8 +16,7 @@ import { authenticateWithPrivateApiKey } from "../auth";
 import { RestError } from "../errors";
 
 const bodySchema = z.object({
-  app: z.string().optional(),
-  outputFile: z.string().optional(),
+  app: z.string().min(1),
   flags: z.record(
     z.string().min(1),
     z.object({
@@ -28,20 +27,15 @@ const bodySchema = z.object({
   segments: z.array(z.string().min(1)),
 });
 
-const paramsSchema = z.object({
-  appName: z.string().min(1),
-});
-
-export const submitConfigRoute: FastifyPluginAsync = async (fastify) => {
-  fastify.post("/apps/:appName/submit-config", async (req, reply) => {
+export const publishAppRoute: FastifyPluginAsync = async (fastify) => {
+  fastify.post("/apps/publish", async (req, reply) => {
     const { organizationId } = await authenticateWithPrivateApiKey(req);
-    const { appName } = paramsSchema.parse(req.params);
 
     const parsedBody = bodySchema.safeParse(req.body);
     if (!parsedBody.success) {
       throw new RestError(400, `Invalid request body: ${parsedBody.error.message}`);
     }
-    const { flags, segments } = parsedBody.data;
+    const { app: appName, flags, segments } = parsedBody.data;
 
     const flagNames = Object.keys(flags);
     const segmentNames = [...new Set(segments)];

@@ -30,27 +30,6 @@ func Example(appName string) *Config {
 	}
 }
 
-func Load(path string) (*Config, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("read config %s: %w", path, err)
-	}
-
-	var c Config
-	if err := json.Unmarshal(data, &c); err != nil {
-		return nil, fmt.Errorf("parse config %s: %w", path, err)
-	}
-
-	if c.Flags == nil {
-		c.Flags = map[string]FlagConfig{}
-	}
-	if c.Segments == nil {
-		c.Segments = []string{}
-	}
-
-	return &c, nil
-}
-
 func Save(path string, c *Config) error {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {

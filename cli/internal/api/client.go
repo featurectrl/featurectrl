@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
-
-	"github.com/featurectrl/featurectrl/cli/internal/config"
 )
 
 type Client struct {
@@ -23,7 +20,7 @@ type NamedRef struct {
 	Name string `json:"name"`
 }
 
-type SubmitConfigResponse struct {
+type PublishAppResponse struct {
 	OK       bool       `json:"ok"`
 	App      NamedRef   `json:"app"`
 	Flags    []NamedRef `json:"flags"`
@@ -37,14 +34,8 @@ func (c *Client) httpClient() *http.Client {
 	return http.DefaultClient
 }
 
-func (c *Client) SubmitConfig(appName string, body *config.Config) (*SubmitConfigResponse, error) {
-	base := strings.TrimRight(c.BaseURL, "/")
-	endpoint := fmt.Sprintf("%s/apps/%s/submit-config", base, url.PathEscape(appName))
-
-	payload, err := json.Marshal(body)
-	if err != nil {
-		return nil, fmt.Errorf("encode request body: %w", err)
-	}
+func (c *Client) PublishApp(payload []byte) (*PublishAppResponse, error) {
+	endpoint := strings.TrimRight(c.BaseURL, "/") + "/apps/publish"
 
 	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(payload))
 	if err != nil {
@@ -71,7 +62,7 @@ func (c *Client) SubmitConfig(appName string, body *config.Config) (*SubmitConfi
 		return nil, fmt.Errorf("server returned %d: %s", resp.StatusCode, msg)
 	}
 
-	var out SubmitConfigResponse
+	var out PublishAppResponse
 	if err := json.Unmarshal(respBody, &out); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
