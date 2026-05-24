@@ -14,7 +14,7 @@ import (
 const (
 	envAPIKey     = "FEATURECTRL_API_KEY"
 	envAPIURL     = "FEATURECTRL_API_URL"
-	defaultAPIURL = "http://localhost:3000/api"
+	defaultAPIURL = "https://api.featurectrl.io"
 )
 
 var (
@@ -65,8 +65,8 @@ var pushCmd = &cobra.Command{
 
 func init() {
 	pushCmd.Flags().StringVarP(&pushConfigPath, "config", "c", defaultConfigFile, "path to the featurectrl config file")
-	pushCmd.Flags().StringVar(&pushAPIKey, "api-key", "", "private API key (overrides $"+envAPIKey+")")
-	pushCmd.Flags().StringVar(&pushAPIURL, "api-url", "", "REST API base URL (overrides $"+envAPIURL+"; defaults to "+defaultAPIURL+")")
+	pushCmd.Flags().StringVar(&pushAPIKey, "api-key", "", "Private API key")
+	pushCmd.Flags().StringVar(&pushAPIURL, "api-url", "", fmt.Stringf("Server API URL (default: %s)", defaultAPIURL))
 
 	RootCmd.AddCommand(pushCmd)
 }
