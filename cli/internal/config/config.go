@@ -17,6 +17,19 @@ type FlagConfig struct {
 	Description  string          `json:"description,omitempty"`
 }
 
+func Example(appName string) *Config {
+	return &Config{
+		App: appName,
+		Flags: map[string]FlagConfig{
+			"example_flag": {
+				DefaultValue: json.RawMessage(`{"enabled": false}`),
+				Description:  "An example feature flag",
+			},
+		},
+		Segments: []string{"example_segment"},
+	}
+}
+
 func Load(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {

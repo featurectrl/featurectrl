@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bufio"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -14,50 +13,35 @@ import (
 	"github.com/featurectrl/featurectrl/cli/internal/config"
 )
 
-const defaultConfigFile = "featurectrl.config.json"
-
-var appName string
-
 var initCmd = &cobra.Command{
-	Use:   "init [config-file]",
+	Use:   "init",
 	Short: "Create a featurectrl.config.json skeleton in the current directory",
-	Args:  cobra.MaximumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		path := defaultConfigFile
-		if len(args) == 1 {
-			path = args[0]
-		}
+	Args:  cobra.NoArgs,
 
-		name := appName
-		if name == "" {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		configPath := getConfigPath(cmd)
+		appName, _ := cmd.Flags().GetString("app-name")
+
+		if appName == "" {
 			prompted, err := promptAppName(cmd.InOrStdin(), cmd.OutOrStdout())
 			if err != nil {
 				return err
 			}
-			name = prompted
+			appName = prompted
 		}
-		if name == "" {
+		if appName == "" {
 			return errors.New("app name is required (pass --app-name or enter one when prompted)")
 		}
 
-		cfg := &config.Config{
-			App: name,
-			Flags: map[string]config.FlagConfig{
-				"example_flag": {
-					DefaultValue: json.RawMessage(`{"enabled": false}`),
-					Description:  "An example feature flag — rename or remove.",
-				},
-			},
-			Segments: []string{"example_segment"},
-		}
+		cfg := config.Example(appName)
 
-		if err := config.Save(path, cfg); err != nil {
+		if err := config.Save(configPath, cfg); err != nil {
 			return err
 		}
 
-		abs, err := filepath.Abs(path)
+		abs, err := filepath.Abs(configPath)
 		if err != nil {
-			abs = path
+			abs = configPath
 		}
 		fmt.Printf("created %s\n", abs)
 		return nil
@@ -76,7 +60,7 @@ func promptAppName(in io.Reader, out io.Writer) (string, error) {
 }
 
 func init() {
-	initCmd.Flags().StringVarP(&appName, "app-name", "a", "", "name of the app to declare in the config")
+	initCmd.Flags().StringP("app-name", "a", "", "name of the app to declare in the config")
 
 	RootCmd.AddCommand(initCmd)
 }
