@@ -1,0 +1,80 @@
+---
+title: CLI
+description: featurectrl CLI installation
+---
+
+featurectrl CLI allows you to manage configs in your project.
+
+## Installation
+
+```shell
+curl -fsSL https://featurectrl.io/cli/install.sh | sh
+```
+
+The script will install the latest `featurectrl` cli. Verify the installation by running:
+
+```shell
+featurectrl --version
+```
+
+## Init featurectrl in your project
+
+```shell
+featurectrl init --app-name my-app
+```
+
+This creates `featurectrl.config.json`:
+
+```json
+{
+  "app": "my-app",
+  "flags": {
+    "example_flag": {
+      "defaultValue": { "enabled": false },
+      "description": "An example feature flag — rename or remove."
+    }
+  },
+  "segments": ["example_segment"]
+}
+```
+
+You also need to configure SDK integration, depending on the language / tools you use in your project.
+
+## Publishing feature flags
+
+```shell
+featurectrl push
+```
+
+This pushes `featurectrl.config.json` to the server - creating/updating required feature flags and segments.
+`push` command needs private API key to be set as `FEATURECTRL_API_KEY` env variable,
+or passed via CLI `--api-key` argument.
+
+For self-hosted setup you also need to override server API url using `FEATURECTRL_API_URL` environment
+variable, or `--api-url` CLI argument.
+
+## Command reference
+
+Global CLI options:
+
+| Flag                  | Default                                                 | Description              |
+|-----------------------|---------------------------------------------------------|--------------------------|
+| `-c, --config <path>` | `$FEATURECTRL_CONFIG_PATH` or `featurectrl.config.json` | Path to the config file. |
+| `--api-key <key>`     | `$FEATURECTRL_API_KEY`                                  | Private API key.         |
+| `--api-url <url>`     | `$FEATURECTRL_API_URL` or `https://api.featurectrl.io`  | API base URL.            |
+
+### `featurectrl init`
+
+Create a `featurectrl.config.json` skeleton in the current directory.
+
+| Flag                    | Default                   | Description                            |
+|-------------------------|---------------------------|----------------------------------------|
+| `-a, --app-name <name>` |                           | App name. Will be prompted if omitted. |
+
+### `featurectrl push`
+
+Read the local config file and submit it to the server.
+
+### `featurectrl --version`
+
+Print the installed CLI version.

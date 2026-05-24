@@ -15,4 +15,15 @@ Sign in to the dashboard and open **Settings → API keys**. Generate a new API 
 
 ## 2. Define your first flag
 
-[todo]
+Initialize a config in your project using [featurectrl CLI](/quickstart/cli/):
+
+```shell
+featurectrl init --app-name my-app
+```
+
+This creates `featurectrl.config.json` for the project
+which can be uploaded to the platform using the following command:
+
+```shell
+featurectrl push
+```

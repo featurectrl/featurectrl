@@ -25,6 +25,7 @@ export default defineConfig({
           label: 'Quickstart',
           items: [
             { label: 'Platform setup', slug: 'quickstart/platform-setup' },
+            { label: 'CLI setup', slug: 'quickstart/cli' },
             { label: 'SDK setup', slug: 'quickstart/sdk-setup' },
           ],
         },
