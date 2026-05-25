@@ -28,7 +28,7 @@ const bodySchema = z.object({
 });
 
 export const publishAppRoute: FastifyPluginAsync = async (fastify) => {
-  fastify.post("/apps/publish", async (req, reply) => {
+  fastify.post("/apps", async (req, reply) => {
     const { organizationId } = await authenticateWithPrivateApiKey(req);
 
     const parsedBody = bodySchema.safeParse(req.body);

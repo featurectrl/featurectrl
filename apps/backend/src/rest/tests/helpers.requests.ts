@@ -16,7 +16,7 @@ export function getFeatureFlagsWithValue({
 
   return {
     method: "GET",
-    url: `/api/public/environment/${environmentName}`,
+    url: `/api/public/flags/${environmentName}`,
     headers,
   } satisfies InjectOptions;
 }
@@ -36,8 +36,28 @@ export function publishApp({
 
   return {
     method: "POST",
-    url: "/api/apps/publish",
+    url: "/api/apps",
     headers,
     payload,
   };
+}
+
+export function listResource({
+  resource,
+  apiKey,
+}: {
+  resource: "apps" | "flags" | "segments";
+  apiKey: string | undefined;
+}): InjectOptions {
+  const apiHost = new URL(env.REST_API_ORIGIN).host;
+  const headers: Record<string, string> = { host: apiHost };
+  if (apiKey !== undefined) {
+    headers.authorization = `Bearer ${apiKey}`;
+  }
+
+  return {
+    method: "GET",
+    url: `/api/${resource}`,
+    headers,
+  } satisfies InjectOptions;
 }

@@ -4,15 +4,15 @@ import { z } from "zod";
 import { db } from "@/db";
 import { environment, type FeatureFlagValue, featureFlag, featureFlagValue } from "@/db/schema";
 import { withActiveOrganization } from "@/db/with-active-organization";
-import { authenticateWithPublicApiKey } from "../auth";
-import { RestError } from "../errors";
+import { authenticateWithPublicApiKey } from "../../auth";
+import { RestError } from "../../errors";
 
 const paramsSchema = z.object({
   environmentName: z.string().min(1),
 });
 
 export const publicEnvironmentRoute: FastifyPluginAsync = async (fastify) => {
-  fastify.get("/public/environment/:environmentName", async (req, reply) => {
+  fastify.get("/public/flags/:environmentName", async (req, reply) => {
     const { organizationId } = await authenticateWithPublicApiKey(req);
     const { environmentName } = paramsSchema.parse(req.params);
 
