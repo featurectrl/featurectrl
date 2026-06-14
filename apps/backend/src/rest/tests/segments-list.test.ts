@@ -16,6 +16,7 @@ type ListResponse = {
 describe("GET /api/segments", () => {
   const ctx = {} as {
     organizationId: string;
+    orgSlug: string;
     privateApiKey: string;
     publicApiKey: string;
   };
@@ -39,6 +40,7 @@ describe("GET /api/segments", () => {
       ]);
 
       ctx.organizationId = organization.id;
+      ctx.orgSlug = organization.slug;
       ctx.privateApiKey = apiKey.privateKey;
       ctx.publicApiKey = apiKey.publicKey;
     });
@@ -46,7 +48,7 @@ describe("GET /api/segments", () => {
 
   test("returns active segments in the pagination envelope, sorted by name", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "segments", apiKey: ctx.privateApiKey }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "segments", apiKey: ctx.privateApiKey }),
     );
 
     expect(response.statusCode).toBe(200);
@@ -63,14 +65,16 @@ describe("GET /api/segments", () => {
 
   test("excludes archived segments", async () => {
     const body = (
-      await fastify.inject(listResource({ resource: "segments", apiKey: ctx.privateApiKey }))
+      await fastify.inject(
+        listResource({ orgSlug: ctx.orgSlug, resource: "segments", apiKey: ctx.privateApiKey }),
+      )
     ).json() as ListResponse;
     expect(body.items.some((item) => item.name.startsWith("z-archived"))).toBe(false);
   });
 
   test("rejects the public API key with 401", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "segments", apiKey: ctx.publicApiKey }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "segments", apiKey: ctx.publicApiKey }),
     );
     expect(response.statusCode).toBe(401);
     expect(response.json()).toHaveProperty("error");
@@ -78,7 +82,7 @@ describe("GET /api/segments", () => {
 
   test("rejects a missing Authorization header with 401", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "segments", apiKey: undefined }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "segments", apiKey: undefined }),
     );
     expect(response.statusCode).toBe(401);
     expect(response.json()).toHaveProperty("error");

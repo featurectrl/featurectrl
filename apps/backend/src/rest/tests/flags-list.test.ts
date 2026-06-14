@@ -22,6 +22,7 @@ type ListResponse = {
 describe("GET /api/flags", () => {
   const ctx = {} as {
     organizationId: string;
+    orgSlug: string;
     privateApiKey: string;
     publicApiKey: string;
   };
@@ -58,6 +59,7 @@ describe("GET /api/flags", () => {
       ]);
 
       ctx.organizationId = organization.id;
+      ctx.orgSlug = organization.slug;
       ctx.privateApiKey = apiKey.privateKey;
       ctx.publicApiKey = apiKey.publicKey;
     });
@@ -65,7 +67,7 @@ describe("GET /api/flags", () => {
 
   test("returns active flags with their definition fields, sorted by name", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "flags", apiKey: ctx.privateApiKey }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "flags", apiKey: ctx.privateApiKey }),
     );
 
     expect(response.statusCode).toBe(200);
@@ -82,21 +84,25 @@ describe("GET /api/flags", () => {
 
   test("excludes archived flags", async () => {
     const body = (
-      await fastify.inject(listResource({ resource: "flags", apiKey: ctx.privateApiKey }))
+      await fastify.inject(
+        listResource({ orgSlug: ctx.orgSlug, resource: "flags", apiKey: ctx.privateApiKey }),
+      )
     ).json() as ListResponse;
     expect(body.items.some((item) => item.name.startsWith("z-archived"))).toBe(false);
   });
 
   test("rejects the public API key with 401", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "flags", apiKey: ctx.publicApiKey }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "flags", apiKey: ctx.publicApiKey }),
     );
     expect(response.statusCode).toBe(401);
     expect(response.json()).toHaveProperty("error");
   });
 
   test("rejects a missing Authorization header with 401", async () => {
-    const response = await fastify.inject(listResource({ resource: "flags", apiKey: undefined }));
+    const response = await fastify.inject(
+      listResource({ orgSlug: ctx.orgSlug, resource: "flags", apiKey: undefined }),
+    );
     expect(response.statusCode).toBe(401);
     expect(response.json()).toHaveProperty("error");
   });

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -34,8 +35,8 @@ func (c *Client) httpClient() *http.Client {
 	return http.DefaultClient
 }
 
-func (c *Client) PublishApp(payload []byte) (*PublishAppResponse, error) {
-	endpoint := strings.TrimRight(c.BaseURL, "/") + "/apps/publish"
+func (c *Client) PublishApp(orgSlug string, payload []byte) (*PublishAppResponse, error) {
+	endpoint := strings.TrimRight(c.BaseURL, "/") + "/" + url.PathEscape(orgSlug) + "/apps"
 
 	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(payload))
 	if err != nil {

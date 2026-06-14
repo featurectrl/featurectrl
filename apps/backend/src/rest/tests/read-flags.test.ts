@@ -16,9 +16,10 @@ type ReadResponse = {
   featureFlags: { name: string; value: { enabled: unknown } }[];
 };
 
-describe("GET /api/public/environment/:environmentName", () => {
+describe("GET /api/:orgSlug/public/flags/:environmentName", () => {
   const ctx = {} as {
     organizationId: string;
+    orgSlug: string;
     environments: {
       production: { id: string; name: string };
       staging: { id: string; name: string };
@@ -46,6 +47,7 @@ describe("GET /api/public/environment/:environmentName", () => {
       const apiKey = await createTestApiKey(tx, { organizationId: organization.id });
 
       ctx.organizationId = organization.id;
+      ctx.orgSlug = organization.slug;
       ctx.environments = { production: prodEnv, staging: stagingEnv };
       ctx.publicApiKey = apiKey.publicKey;
     });
@@ -62,6 +64,7 @@ describe("GET /api/public/environment/:environmentName", () => {
 
     const response = await fastify.inject(
       getFeatureFlagsWithValue({
+        orgSlug: ctx.orgSlug,
         environmentName: ctx.environments.production.name,
         apiKey: ctx.publicApiKey,
       }),
@@ -92,6 +95,7 @@ describe("GET /api/public/environment/:environmentName", () => {
     const prodRuntimeValue = (
       await fastify.inject(
         getFeatureFlagsWithValue({
+          orgSlug: ctx.orgSlug,
           environmentName: ctx.environments.production.name,
           apiKey: ctx.publicApiKey,
         }),
@@ -108,6 +112,7 @@ describe("GET /api/public/environment/:environmentName", () => {
     const staging = (
       await fastify.inject(
         getFeatureFlagsWithValue({
+          orgSlug: ctx.orgSlug,
           environmentName: ctx.environments.staging.name,
           apiKey: ctx.publicApiKey,
         }),
@@ -135,6 +140,7 @@ describe("GET /api/public/environment/:environmentName", () => {
     const body = (
       await fastify.inject(
         getFeatureFlagsWithValue({
+          orgSlug: ctx.orgSlug,
           environmentName: ctx.environments.production.name,
           apiKey: ctx.publicApiKey,
         }),
@@ -147,6 +153,7 @@ describe("GET /api/public/environment/:environmentName", () => {
   test("returns 404 for an unknown environment", async () => {
     const response = await fastify.inject(
       getFeatureFlagsWithValue({
+        orgSlug: ctx.orgSlug,
         environmentName: "does-not-exist",
         apiKey: ctx.publicApiKey,
       }),

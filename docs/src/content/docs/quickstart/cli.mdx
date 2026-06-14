@@ -20,13 +20,14 @@ featurectrl --version
 ## Init featurectrl in your project
 
 ```shell
-featurectrl init --app-name my-app
+featurectrl init --org my-org --app-name my-app
 ```
 
 This creates `featurectrl.config.json`:
 
 ```json
 {
+  "organization": "my-org",
   "app": "my-app",
   "flags": {
     "example_flag": {
@@ -37,6 +38,9 @@ This creates `featurectrl.config.json`:
   "segments": ["example_segment"]
 }
 ```
+
+`organization` is your organization slug - it identifies which organization the config is
+published to.
 
 You also need to configure SDK integration, depending on the language / tools you use in your project.
 
@@ -67,9 +71,10 @@ Global CLI options:
 
 Create a `featurectrl.config.json` skeleton in the current directory.
 
-| Flag                    | Default                   | Description                            |
-|-------------------------|---------------------------|----------------------------------------|
-| `-a, --app-name <name>` |                           | App name. Will be prompted if omitted. |
+| Flag                    | Default                   | Description                                     |
+|-------------------------|---------------------------|-------------------------------------------------|
+| `-o, --org <slug>`      |                           | Organization slug. Will be prompted if omitted. |
+| `-a, --app-name <name>` |                           | App name. Will be prompted if omitted.          |
 
 ### `featurectrl push`
 

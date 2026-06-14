@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/featurectrl/featurectrl/cli/internal/api"
+	"github.com/featurectrl/featurectrl/cli/internal/config"
 )
 
 var publishCmd = &cobra.Command{
@@ -31,8 +32,16 @@ var publishCmd = &cobra.Command{
 			return fmt.Errorf("config %s is not valid JSON", configPath)
 		}
 
+		var cfg config.Config
+		if err := json.Unmarshal(payload, &cfg); err != nil {
+			return fmt.Errorf("parse config %s: %w", configPath, err)
+		}
+		if cfg.Organization == "" {
+			return fmt.Errorf("organization is required in %s", configPath)
+		}
+
 		client := &api.Client{BaseURL: apiUrl, APIKey: apiKey}
-		resp, err := client.PublishApp(payload)
+		resp, err := client.PublishApp(cfg.Organization, payload)
 		if err != nil {
 			return err
 		}

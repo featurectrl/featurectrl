@@ -16,6 +16,7 @@ type ListResponse = {
 describe("GET /api/apps", () => {
   const ctx = {} as {
     organizationId: string;
+    orgSlug: string;
     privateApiKey: string;
     publicApiKey: string;
   };
@@ -39,6 +40,7 @@ describe("GET /api/apps", () => {
       ]);
 
       ctx.organizationId = organization.id;
+      ctx.orgSlug = organization.slug;
       ctx.privateApiKey = apiKey.privateKey;
       ctx.publicApiKey = apiKey.publicKey;
     });
@@ -46,7 +48,7 @@ describe("GET /api/apps", () => {
 
   test("returns active apps in the pagination envelope, sorted by name", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "apps", apiKey: ctx.privateApiKey }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "apps", apiKey: ctx.privateApiKey }),
     );
 
     expect(response.statusCode).toBe(200);
@@ -64,21 +66,25 @@ describe("GET /api/apps", () => {
 
   test("excludes archived apps", async () => {
     const body = (
-      await fastify.inject(listResource({ resource: "apps", apiKey: ctx.privateApiKey }))
+      await fastify.inject(
+        listResource({ orgSlug: ctx.orgSlug, resource: "apps", apiKey: ctx.privateApiKey }),
+      )
     ).json() as ListResponse;
     expect(body.items.some((item) => item.name.startsWith("z-archived"))).toBe(false);
   });
 
   test("rejects the public API key with 401", async () => {
     const response = await fastify.inject(
-      listResource({ resource: "apps", apiKey: ctx.publicApiKey }),
+      listResource({ orgSlug: ctx.orgSlug, resource: "apps", apiKey: ctx.publicApiKey }),
     );
     expect(response.statusCode).toBe(401);
     expect(response.json()).toHaveProperty("error");
   });
 
   test("rejects a missing Authorization header with 401", async () => {
-    const response = await fastify.inject(listResource({ resource: "apps", apiKey: undefined }));
+    const response = await fastify.inject(
+      listResource({ orgSlug: ctx.orgSlug, resource: "apps", apiKey: undefined }),
+    );
     expect(response.statusCode).toBe(401);
     expect(response.json()).toHaveProperty("error");
   });

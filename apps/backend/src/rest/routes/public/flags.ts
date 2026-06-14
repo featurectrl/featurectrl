@@ -8,13 +8,14 @@ import { authenticateWithPublicApiKey } from "../../auth";
 import { RestError } from "../../errors";
 
 const paramsSchema = z.object({
+  orgSlug: z.string().min(1),
   environmentName: z.string().min(1),
 });
 
 export const publicEnvironmentRoute: FastifyPluginAsync = async (fastify) => {
-  fastify.get("/public/flags/:environmentName", async (req, reply) => {
-    const { organizationId } = await authenticateWithPublicApiKey(req);
-    const { environmentName } = paramsSchema.parse(req.params);
+  fastify.get("/:orgSlug/public/flags/:environmentName", async (req, reply) => {
+    const { orgSlug, environmentName } = paramsSchema.parse(req.params);
+    const { organizationId } = await authenticateWithPublicApiKey(req, orgSlug);
 
     const result = await db.transaction(async (tx) => {
       await withActiveOrganization(tx, organizationId);

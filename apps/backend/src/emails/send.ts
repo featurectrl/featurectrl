@@ -9,7 +9,7 @@ const transport = env.EMAIL_BACKEND_URL.startsWith("console://")
       send: (mail) => {
         console.log("Subject:", mail.data.subject);
         console.log("Body:");
-        console.log(mail.data.text)
+        console.log(mail.data.text);
       },
     })
   : nodemailer.createTransport(env.EMAIL_BACKEND_URL, {

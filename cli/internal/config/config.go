@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	App      string                `json:"app"`
-	Flags    map[string]FlagConfig `json:"flags"`
-	Segments []string              `json:"segments"`
+	Organization string                `json:"organization"`
+	App          string                `json:"app"`
+	Flags        map[string]FlagConfig `json:"flags"`
+	Segments     []string              `json:"segments"`
 }
 
 type FlagConfig struct {
@@ -17,9 +18,10 @@ type FlagConfig struct {
 	Description  string          `json:"description,omitempty"`
 }
 
-func Example(appName string) *Config {
+func Example(orgSlug, appName string) *Config {
 	return &Config{
-		App: appName,
+		Organization: orgSlug,
+		App:          appName,
 		Flags: map[string]FlagConfig{
 			"example_flag": {
 				DefaultValue: json.RawMessage(`{"enabled": false}`),

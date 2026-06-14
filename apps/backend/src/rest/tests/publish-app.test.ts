@@ -14,9 +14,10 @@ import { createTestApiKey } from "@/tests/fixtures/api-key";
 import { createTestOrganization } from "@/tests/fixtures/organization";
 import { publishApp } from "./helpers.requests";
 
-describe("POST /api/apps/publish", () => {
+describe("POST /api/:orgSlug/apps", () => {
   const ctx = {} as {
     organizationId: string;
+    orgSlug: string;
     privateApiKey: string;
   };
 
@@ -29,6 +30,7 @@ describe("POST /api/apps/publish", () => {
       const apiKey = await createTestApiKey(tx, { organizationId: organization.id });
 
       ctx.organizationId = organization.id;
+      ctx.orgSlug = organization.slug;
       ctx.privateApiKey = apiKey.privateKey;
     });
   });
@@ -36,6 +38,7 @@ describe("POST /api/apps/publish", () => {
   test("publishing new app - creates app, flags, segments, and their connections", async () => {
     const response = await fastify.inject(
       publishApp({
+        orgSlug: ctx.orgSlug,
         apiKey: ctx.privateApiKey,
         payload: {
           app: "my-app",
@@ -93,6 +96,7 @@ describe("POST /api/apps/publish", () => {
   test("re-publishing app replaces connections (adds new, drops removed)", async () => {
     const first = await fastify.inject(
       publishApp({
+        orgSlug: ctx.orgSlug,
         apiKey: ctx.privateApiKey,
         payload: {
           app: "my-app",
@@ -109,6 +113,7 @@ describe("POST /api/apps/publish", () => {
 
     const second = await fastify.inject(
       publishApp({
+        orgSlug: ctx.orgSlug,
         apiKey: ctx.privateApiKey,
         payload: {
           app: "my-app",
@@ -141,6 +146,7 @@ describe("POST /api/apps/publish", () => {
   test("returns 400 when for malformed body", async () => {
     const response = await fastify.inject(
       publishApp({
+        orgSlug: ctx.orgSlug,
         apiKey: ctx.privateApiKey,
         payload: {},
       }),

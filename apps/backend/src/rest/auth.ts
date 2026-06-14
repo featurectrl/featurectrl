@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { FastifyRequest } from "fastify";
 import { db } from "@/db";
-import { apiKey } from "@/db/schema";
+import { apiKey, organization } from "@/db/schema";
 import { RestError } from "./errors";
 
 function extractToken(req: FastifyRequest): string {
@@ -18,14 +18,16 @@ function extractToken(req: FastifyRequest): string {
   return token;
 }
 
-async function lookupOrganizationByKey(
+async function resolveOrganization(
   column: typeof apiKey.publicKey | typeof apiKey.privateKey,
   token: string,
+  orgSlug: string,
 ): Promise<{ organizationId: string }> {
   const [row] = await db
-    .select({ organizationId: apiKey.organizationId })
+    .select({ organizationId: organization.id })
     .from(apiKey)
-    .where(eq(column, token))
+    .innerJoin(organization, eq(organization.id, apiKey.organizationId))
+    .where(and(eq(column, token), eq(organization.slug, orgSlug)))
     .limit(1);
 
   if (!row) {
@@ -36,12 +38,14 @@ async function lookupOrganizationByKey(
 
 export function authenticateWithPublicApiKey(
   req: FastifyRequest,
+  orgSlug: string,
 ): Promise<{ organizationId: string }> {
-  return lookupOrganizationByKey(apiKey.publicKey, extractToken(req));
+  return resolveOrganization(apiKey.publicKey, extractToken(req), orgSlug);
 }
 
 export function authenticateWithPrivateApiKey(
   req: FastifyRequest,
+  orgSlug: string,
 ): Promise<{ organizationId: string }> {
-  return lookupOrganizationByKey(apiKey.privateKey, extractToken(req));
+  return resolveOrganization(apiKey.privateKey, extractToken(req), orgSlug);
 }

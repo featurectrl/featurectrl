@@ -15,6 +15,10 @@ import { withActiveOrganization } from "@/db/with-active-organization";
 import { authenticateWithPrivateApiKey } from "../auth";
 import { RestError } from "../errors";
 
+const paramsSchema = z.object({
+  orgSlug: z.string().min(1),
+});
+
 const bodySchema = z.object({
   app: z.string().min(1),
   flags: z.record(
@@ -28,8 +32,9 @@ const bodySchema = z.object({
 });
 
 export const publishAppRoute: FastifyPluginAsync = async (fastify) => {
-  fastify.post("/apps", async (req, reply) => {
-    const { organizationId } = await authenticateWithPrivateApiKey(req);
+  fastify.post("/:orgSlug/apps", async (req, reply) => {
+    const { orgSlug } = paramsSchema.parse(req.params);
+    const { organizationId } = await authenticateWithPrivateApiKey(req, orgSlug);
 
     const parsedBody = bodySchema.safeParse(req.body);
     if (!parsedBody.success) {

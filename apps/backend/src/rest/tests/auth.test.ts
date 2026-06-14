@@ -9,8 +9,11 @@ import { getFeatureFlagsWithValue, publishApp } from "./helpers.requests";
 describe("authentication", () => {
   const ctx = {} as {
     organizationId: string;
+    orgSlug: string;
     privateApiKey: string;
     publicApiKey: string;
+    // A second, unrelated organization the keys above do NOT belong to.
+    otherOrgSlug: string;
   };
 
   beforeEach(async () => {
@@ -21,51 +24,83 @@ describe("authentication", () => {
 
       const apiKey = await createTestApiKey(tx, { organizationId: organization.id });
 
+      const otherOrganization = await createTestOrganization(tx);
+
       ctx.organizationId = organization.id;
+      ctx.orgSlug = organization.slug;
       ctx.privateApiKey = apiKey.privateKey;
       ctx.publicApiKey = apiKey.publicKey;
+      ctx.otherOrgSlug = otherOrganization.slug;
     });
   });
 
-  describe("POST /api/apps/publish (private key)", () => {
+  describe("POST /api/:orgSlug/apps (private key)", () => {
     const payload = { app: "x", flags: {}, segments: [] };
 
     test("401 when Authorization header is missing", async () => {
-      const response = await fastify.inject(publishApp({ apiKey: undefined, payload }));
+      const response = await fastify.inject(
+        publishApp({ orgSlug: ctx.orgSlug, apiKey: undefined, payload }),
+      );
       expect(response.statusCode).toBe(401);
     });
 
     test("401 for an unknown private key", async () => {
-      const response = await fastify.inject(publishApp({ apiKey: "sk_unknown", payload }));
+      const response = await fastify.inject(
+        publishApp({ orgSlug: ctx.orgSlug, apiKey: "sk_unknown", payload }),
+      );
       expect(response.statusCode).toBe(401);
     });
 
     test("401 when a public key is used instead of a private key", async () => {
-      const response = await fastify.inject(publishApp({ apiKey: ctx.publicApiKey, payload }));
+      const response = await fastify.inject(
+        publishApp({ orgSlug: ctx.orgSlug, apiKey: ctx.publicApiKey, payload }),
+      );
+      expect(response.statusCode).toBe(401);
+    });
+
+    test("401 when a valid key is used against a different org's slug", async () => {
+      const response = await fastify.inject(
+        publishApp({ orgSlug: ctx.otherOrgSlug, apiKey: ctx.privateApiKey, payload }),
+      );
       expect(response.statusCode).toBe(401);
     });
   });
 
-  describe("GET /api/public/environment/:name (public key)", () => {
+  describe("GET /api/:orgSlug/public/flags/:environmentName (public key)", () => {
     const environmentName = "prod";
 
     test("401 when Authorization header is missing", async () => {
       const response = await fastify.inject(
-        getFeatureFlagsWithValue({ environmentName, apiKey: undefined }),
+        getFeatureFlagsWithValue({ orgSlug: ctx.orgSlug, environmentName, apiKey: undefined }),
       );
       expect(response.statusCode).toBe(401);
     });
 
     test("401 for an unknown public key", async () => {
       const response = await fastify.inject(
-        getFeatureFlagsWithValue({ environmentName, apiKey: "pk_unknown" }),
+        getFeatureFlagsWithValue({ orgSlug: ctx.orgSlug, environmentName, apiKey: "pk_unknown" }),
       );
       expect(response.statusCode).toBe(401);
     });
 
     test("401 when a private key is used instead of a public key", async () => {
       const response = await fastify.inject(
-        getFeatureFlagsWithValue({ environmentName, apiKey: ctx.privateApiKey }),
+        getFeatureFlagsWithValue({
+          orgSlug: ctx.orgSlug,
+          environmentName,
+          apiKey: ctx.privateApiKey,
+        }),
+      );
+      expect(response.statusCode).toBe(401);
+    });
+
+    test("401 when a valid key is used against a different org's slug", async () => {
+      const response = await fastify.inject(
+        getFeatureFlagsWithValue({
+          orgSlug: ctx.otherOrgSlug,
+          environmentName,
+          apiKey: ctx.publicApiKey,
+        }),
       );
       expect(response.statusCode).toBe(401);
     });
