@@ -31,7 +31,7 @@ describe("POST /api/:orgSlug/apps", () => {
 
       ctx.organizationId = organization.id;
       ctx.orgSlug = organization.slug;
-      ctx.privateApiKey = apiKey.privateKey;
+      ctx.privateApiKey = apiKey.key;
     });
   });
 

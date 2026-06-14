@@ -9,5 +9,6 @@ export type {
   BaseUserSegment,
   Environment,
   FeatureFlag,
+  PublicKey,
   UserSegment,
 } from "./serializers";

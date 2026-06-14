@@ -16,6 +16,10 @@ import {
   MemberListSection,
   MemberListSectionSkeleton,
 } from "./_components/members/member-list-section.tsx";
+import {
+  PublicKeyListSection,
+  PublicKeyListSectionSkeleton,
+} from "./_components/public-keys/public-key-list-section.tsx";
 
 export const Route = createFileRoute("/_main/settings")({
   staticData: { crumb: "Settings" },
@@ -26,6 +30,7 @@ export const Route = createFileRoute("/_main/settings")({
       queryClient.ensureQueryData(betterAuth.organization.getFullOrganization.queryOptions()),
       queryClient.ensureQueryData(trpc.environments.list.queryOptions({ includeArchived: false })),
       queryClient.ensureQueryData(trpc.apiKeys.list.queryOptions()),
+      queryClient.ensureQueryData(trpc.publicKeys.list.queryOptions()),
     ]);
   },
   pendingComponent: SettingsPageLoading,
@@ -52,6 +57,7 @@ function SettingsPageLoading() {
         <GeneralSectionSkeleton />
         <EnvironmentListSectionSkeleton />
         <ApiKeyListSectionSkeleton />
+        <PublicKeyListSectionSkeleton />
         <MemberListSectionSkeleton />
         <DeleteOrganizationSectionSkeleton />
       </div>
@@ -68,6 +74,7 @@ function SettingsPage() {
         <GeneralSection />
         <EnvironmentListSection />
         <ApiKeyListSection />
+        <PublicKeyListSection />
         <MemberListSection />
         <DeleteOrganizationSection />
       </div>

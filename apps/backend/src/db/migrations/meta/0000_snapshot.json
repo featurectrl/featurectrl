@@ -1,5 +1,5 @@
 {
-  "id": "ce7ba321-016f-436e-a1d8-d3dee07f034a",
+  "id": "7938b856-bf92-44d4-8b45-bfaa705f76ef",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -26,17 +26,17 @@
           "primaryKey": false,
           "notNull": true
         },
-        "public_key": {
-          "name": "public_key",
+        "hashed_key": {
+          "name": "hashed_key",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "private_key": {
-          "name": "private_key",
-          "type": "text",
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -60,15 +60,76 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "api_key_public_key_unique": {
-          "name": "api_key_public_key_unique",
+        "api_key_hashed_key_unique": {
+          "name": "api_key_hashed_key_unique",
           "nullsNotDistinct": false,
-          "columns": ["public_key"]
+          "columns": ["hashed_key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.public_key": {
+      "name": "public_key",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
         },
-        "api_key_private_key_unique": {
-          "name": "api_key_private_key_unique",
+        "organization_id": {
+          "name": "organization_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "public_key_organization_id_organization_id_fk": {
+          "name": "public_key_organization_id_organization_id_fk",
+          "tableFrom": "public_key",
+          "tableTo": "organization",
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "public_key_key_unique": {
+          "name": "public_key_key_unique",
           "nullsNotDistinct": false,
-          "columns": ["private_key"]
+          "columns": ["key"]
         }
       },
       "policies": {},

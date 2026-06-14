@@ -1,14 +1,15 @@
 import { TRPCError } from "@trpc/server";
+import { addDays, startOfDay } from "date-fns";
 import { and, eq } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 import { apiKey } from "@/db/schema";
-import { generateSecretKey } from "@/lib/secrets";
+import { API_KEY_PREFIX, generateSecretKey, hashSecretKey } from "@/lib/secrets";
 import {
   type ApiKey,
-  type ApiKeySecrets,
+  type ApiKeySecret,
   serializeApiKey,
-  serializeApiKeySecrets,
+  serializeApiKeySecret,
 } from "../serializers";
 import { organizationProcedure, router } from "../trpc";
 
@@ -22,29 +23,38 @@ export const apiKeysRoutes = router({
   }),
 
   create: organizationProcedure
-    .input(z.object({ displayName: z.string().min(1).max(100) }))
+    .input(
+      z.object({
+        displayName: z.string().min(1).max(100),
+        expiresInDays: z.number().min(1).max(365).nullable(),
+      }),
+    )
     .mutation(
       async ({
         ctx,
         input,
       }): Promise<{
         apiKey: ApiKey;
-        secrets: ApiKeySecrets;
+        secret: ApiKeySecret;
       }> => {
+        const key = generateSecretKey(API_KEY_PREFIX);
+
         const [row] = await ctx.db
           .insert(apiKey)
           .values({
             id: uuidv7(),
             organizationId: ctx.activeOrganizationId,
             displayName: input.displayName,
-            publicKey: generateSecretKey("fctrl_pk"),
-            privateKey: generateSecretKey("fctrl_sk"),
+            hashedKey: hashSecretKey(key),
+            expiresAt: input.expiresInDays
+              ? addDays(startOfDay(Date.now()), input.expiresInDays)
+              : null,
           })
           .returning();
 
         return {
           apiKey: serializeApiKey(row),
-          secrets: serializeApiKeySecrets(row),
+          secret: serializeApiKeySecret(key),
         };
       },
     ),
@@ -70,14 +80,13 @@ export const apiKeysRoutes = router({
       ctx,
       input,
     }): Promise<{
-      secrets: ApiKeySecrets;
+      secret: ApiKeySecret;
     }> => {
+      const key = generateSecretKey(API_KEY_PREFIX);
+
       const [row] = await ctx.db
         .update(apiKey)
-        .set({
-          publicKey: generateSecretKey("fctrl_pk"),
-          privateKey: generateSecretKey("fctrl_sk"),
-        })
+        .set({ hashedKey: hashSecretKey(key) })
         .where(and(eq(apiKey.id, input.id), eq(apiKey.organizationId, ctx.activeOrganizationId)))
         .returning();
 
@@ -86,7 +95,7 @@ export const apiKeysRoutes = router({
       }
 
       return {
-        secrets: serializeApiKeySecrets(row),
+        secret: serializeApiKeySecret(key),
       };
     },
   ),

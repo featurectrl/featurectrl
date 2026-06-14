@@ -4,6 +4,7 @@ import { withActiveOrganization } from "@/db/with-active-organization";
 import { fastify } from "@/server";
 import { createTestApiKey } from "@/tests/fixtures/api-key";
 import { createTestOrganization } from "@/tests/fixtures/organization";
+import { createTestPublicKey } from "@/tests/fixtures/public-key";
 import { getFeatureFlagsWithValue, publishApp } from "./helpers.requests";
 
 describe("authentication", () => {
@@ -12,6 +13,8 @@ describe("authentication", () => {
     orgSlug: string;
     privateApiKey: string;
     publicApiKey: string;
+    expiredPrivateApiKey: string;
+    expiredPublicApiKey: string;
     // A second, unrelated organization the keys above do NOT belong to.
     otherOrgSlug: string;
   };
@@ -23,13 +26,26 @@ describe("authentication", () => {
       await withActiveOrganization(tx, organization.id);
 
       const apiKey = await createTestApiKey(tx, { organizationId: organization.id });
+      const publicKey = await createTestPublicKey(tx, { organizationId: organization.id });
+
+      const expired = new Date(Date.now() - 1000);
+      const expiredApiKey = await createTestApiKey(tx, {
+        organizationId: organization.id,
+        expiresAt: expired,
+      });
+      const expiredPublicKey = await createTestPublicKey(tx, {
+        organizationId: organization.id,
+        expiresAt: expired,
+      });
 
       const otherOrganization = await createTestOrganization(tx);
 
       ctx.organizationId = organization.id;
       ctx.orgSlug = organization.slug;
-      ctx.privateApiKey = apiKey.privateKey;
-      ctx.publicApiKey = apiKey.publicKey;
+      ctx.privateApiKey = apiKey.key;
+      ctx.publicApiKey = publicKey.key;
+      ctx.expiredPrivateApiKey = expiredApiKey.key;
+      ctx.expiredPublicApiKey = expiredPublicKey.key;
       ctx.otherOrgSlug = otherOrganization.slug;
     });
   });
@@ -61,6 +77,13 @@ describe("authentication", () => {
     test("401 when a valid key is used against a different org's slug", async () => {
       const response = await fastify.inject(
         publishApp({ orgSlug: ctx.otherOrgSlug, apiKey: ctx.privateApiKey, payload }),
+      );
+      expect(response.statusCode).toBe(401);
+    });
+
+    test("401 when an expired private key is used", async () => {
+      const response = await fastify.inject(
+        publishApp({ orgSlug: ctx.orgSlug, apiKey: ctx.expiredPrivateApiKey, payload }),
       );
       expect(response.statusCode).toBe(401);
     });
@@ -100,6 +123,17 @@ describe("authentication", () => {
           orgSlug: ctx.otherOrgSlug,
           environmentName,
           apiKey: ctx.publicApiKey,
+        }),
+      );
+      expect(response.statusCode).toBe(401);
+    });
+
+    test("401 when an expired public key is used", async () => {
+      const response = await fastify.inject(
+        getFeatureFlagsWithValue({
+          orgSlug: ctx.orgSlug,
+          environmentName,
+          apiKey: ctx.expiredPublicApiKey,
         }),
       );
       expect(response.statusCode).toBe(401);
