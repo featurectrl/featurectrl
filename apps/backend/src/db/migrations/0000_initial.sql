@@ -2,11 +2,20 @@ CREATE TABLE "api_key" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"organization_id" uuid NOT NULL,
 	"display_name" text NOT NULL,
-	"public_key" text NOT NULL,
-	"private_key" text NOT NULL,
+	"hashed_key" text NOT NULL,
+	"expires_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "api_key_public_key_unique" UNIQUE("public_key"),
-	CONSTRAINT "api_key_private_key_unique" UNIQUE("private_key")
+	CONSTRAINT "api_key_hashed_key_unique" UNIQUE("hashed_key")
+);
+--> statement-breakpoint
+CREATE TABLE "public_key" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"organization_id" uuid NOT NULL,
+	"display_name" text NOT NULL,
+	"key" text NOT NULL,
+	"expires_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "public_key_key_unique" UNIQUE("key")
 );
 --> statement-breakpoint
 CREATE TABLE "app" (
@@ -162,6 +171,7 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 ALTER TABLE "api_key" ADD CONSTRAINT "api_key_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "public_key" ADD CONSTRAINT "public_key_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app" ADD CONSTRAINT "app_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_feature_flag_connection" ADD CONSTRAINT "app_feature_flag_connection_app_id_app_id_fk" FOREIGN KEY ("app_id") REFERENCES "public"."app"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_feature_flag_connection" ADD CONSTRAINT "app_feature_flag_connection_feature_flag_id_feature_flag_id_fk" FOREIGN KEY ("feature_flag_id") REFERENCES "public"."feature_flag"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

@@ -19,8 +19,8 @@ import {
 } from "@/ui/dialog.tsx";
 import { Field, FieldError, FieldLabel } from "@/ui/field.tsx";
 import { Input } from "@/ui/input.tsx";
+import { CopyableKey } from "../keys/copyable-key.tsx";
 import { DEFAULT_EXPIRY, ExpirySelect, expiryToDays } from "../keys/expiry-select.tsx";
-import { ApiKeySecretView } from "./api-key-secret-view.tsx";
 
 const formSchema = z.object({
   displayName: z.string().min(1, "Required").max(100, "Too long"),
@@ -29,16 +29,16 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-type ApiKeyWithSecret = inferOutput<ReturnType<typeof useTRPC>["apiKeys"]["create"]>;
+type PublicKeyWithSecret = inferOutput<ReturnType<typeof useTRPC>["publicKeys"]["create"]>;
 
-interface CreateApiKeyDialogProps {
+interface CreatePublicKeyDialogProps {
   handle: DialogPrimitive.Handle<void>;
 }
 
-export function CreateApiKeyDialog({ handle }: CreateApiKeyDialogProps) {
+export function CreatePublicKeyDialog({ handle }: CreatePublicKeyDialogProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const [createdKey, setCreatedKey] = useState<ApiKeyWithSecret | null>(null);
+  const [createdKey, setCreatedKey] = useState<PublicKeyWithSecret | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -46,10 +46,10 @@ export function CreateApiKeyDialog({ handle }: CreateApiKeyDialogProps) {
   });
 
   const createMutation = useMutation(
-    trpc.apiKeys.create.mutationOptions({
+    trpc.publicKeys.create.mutationOptions({
       onSuccess: async (data) => {
-        toast.success("API key created");
-        await queryClient.invalidateQueries(trpc.apiKeys.list.queryFilter());
+        toast.success("Public key created");
+        await queryClient.invalidateQueries(trpc.publicKeys.list.queryFilter());
         setCreatedKey(data);
       },
       onError: (error) => {
@@ -78,33 +78,33 @@ export function CreateApiKeyDialog({ handle }: CreateApiKeyDialogProps) {
         {createdKey == null ? (
           <>
             <DialogHeader>
-              <DialogTitle>Generate new API key</DialogTitle>
+              <DialogTitle>Generate new public key</DialogTitle>
               <DialogDescription>
-                Generate a new secret key for accessing the API.
+                Generate a new public key for client-side access to the API.
               </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
               <Field>
-                <FieldLabel htmlFor="api-key-display-name">Name</FieldLabel>
+                <FieldLabel htmlFor="public-key-display-name">Name</FieldLabel>
                 <Input
-                  id="api-key-display-name"
+                  id="public-key-display-name"
                   autoFocus
                   autoComplete="off"
-                  placeholder="GitHub CI"
+                  placeholder="Web app"
                   {...form.register("displayName")}
                 />
                 <FieldError>{form.formState.errors.displayName?.message}</FieldError>
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="api-key-expiry">Expiration</FieldLabel>
+                <FieldLabel htmlFor="public-key-expiry">Expiration</FieldLabel>
                 <Controller
                   control={form.control}
                   name="expiry"
                   render={({ field }) => (
                     <ExpirySelect
-                      id="api-key-expiry"
+                      id="public-key-expiry"
                       value={field.value}
                       onValueChange={field.onChange}
                       disabled={createMutation.isPending}
@@ -135,14 +135,17 @@ export function CreateApiKeyDialog({ handle }: CreateApiKeyDialogProps) {
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>API key created</DialogTitle>
+              <DialogTitle>Public key created</DialogTitle>
               <DialogDescription>
-                <span className="font-medium">{createdKey.apiKey.displayName}</span> is ready to
+                <span className="font-medium">{createdKey.publicKey.displayName}</span> is ready to
                 use.
               </DialogDescription>
             </DialogHeader>
 
-            <ApiKeySecretView secretKey={createdKey.secret.key} />
+            <Field>
+              <FieldLabel htmlFor="reveal-public-key">Public key</FieldLabel>
+              <CopyableKey id="reveal-public-key" value={createdKey.secret.key} />
+            </Field>
 
             <DialogFooter>
               <Button type="button" onClick={() => handle.close()}>

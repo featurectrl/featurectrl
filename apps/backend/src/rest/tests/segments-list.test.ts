@@ -6,6 +6,7 @@ import { withActiveOrganization } from "@/db/with-active-organization";
 import { fastify } from "@/server";
 import { createTestApiKey } from "@/tests/fixtures/api-key";
 import { createTestOrganization } from "@/tests/fixtures/organization";
+import { createTestPublicKey } from "@/tests/fixtures/public-key";
 import { listResource } from "./helpers.requests";
 
 type ListResponse = {
@@ -27,6 +28,7 @@ describe("GET /api/segments", () => {
       await withActiveOrganization(tx, organization.id);
 
       const apiKey = await createTestApiKey(tx, { organizationId: organization.id });
+      const publicKey = await createTestPublicKey(tx, { organizationId: organization.id });
 
       await tx.insert(userSegment).values([
         { id: uuidv7(), organizationId: organization.id, name: "beta-users" },
@@ -41,8 +43,8 @@ describe("GET /api/segments", () => {
 
       ctx.organizationId = organization.id;
       ctx.orgSlug = organization.slug;
-      ctx.privateApiKey = apiKey.privateKey;
-      ctx.publicApiKey = apiKey.publicKey;
+      ctx.privateApiKey = apiKey.key;
+      ctx.publicApiKey = publicKey.key;
     });
   });
 

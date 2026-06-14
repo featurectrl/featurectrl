@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { db } from "@/db";
 import { withActiveOrganization } from "@/db/with-active-organization";
 import { fastify } from "@/server";
-import { createTestApiKey } from "@/tests/fixtures/api-key";
 import { createTestEnvironments } from "@/tests/fixtures/environment";
 import {
   createTestFeatureFlag,
@@ -10,6 +9,7 @@ import {
   setTestFeatureFlagValues,
 } from "@/tests/fixtures/feature-flag";
 import { createTestOrganization } from "@/tests/fixtures/organization";
+import { createTestPublicKey } from "@/tests/fixtures/public-key";
 import { getFeatureFlagsWithValue } from "./helpers.requests";
 
 type ReadResponse = {
@@ -44,12 +44,12 @@ describe("GET /api/:orgSlug/public/flags/:environmentName", () => {
           name: "staging",
         },
       ]);
-      const apiKey = await createTestApiKey(tx, { organizationId: organization.id });
+      const publicKey = await createTestPublicKey(tx, { organizationId: organization.id });
 
       ctx.organizationId = organization.id;
       ctx.orgSlug = organization.slug;
       ctx.environments = { production: prodEnv, staging: stagingEnv };
-      ctx.publicApiKey = apiKey.publicKey;
+      ctx.publicApiKey = publicKey.key;
     });
   });
 

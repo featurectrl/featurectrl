@@ -15,6 +15,7 @@ import type { ApiKey } from "@/lib/trpc.types";
 import { Button } from "@/ui/button.tsx";
 import { DialogTrigger } from "@/ui/dialog.tsx";
 import { ApiKeyRow, ApiKeyRowSkeleton } from "./api-key-row.tsx";
+import { ChangeApiKeyNameDialog } from "./change-api-key-name-dialog.tsx";
 import { CreateApiKeyDialog } from "./create-api-key-dialog.tsx";
 import { DeleteApiKeyDialog } from "./delete-api-key-dialog.tsx";
 import { RegenerateApiKeyDialog } from "./regenerate-api-key-dialog.tsx";
@@ -30,6 +31,7 @@ export function ApiKeyListSection() {
 export function ApiKeyListSectionWithQuery() {
   const trpc = useTRPC();
   const createDialogHandle = useDialogHandle();
+  const changeNameDialogHandle = useDialogHandle<{ apiKey: ApiKey }>();
   const regenerateDialogHandle = useDialogHandle<{ apiKey: ApiKey }>();
   const deleteDialogHandle = useDialogHandle<{ apiKey: ApiKey }>();
   const { data: apiKeys } = useSuspenseQuery(trpc.apiKeys.list.queryOptions());
@@ -55,6 +57,7 @@ export function ApiKeyListSectionWithQuery() {
             <ApiKeyRow
               key={key.id}
               apiKey={key}
+              onRename={() => changeNameDialogHandle.openWithPayload({ apiKey: key })}
               onRegenerate={() => regenerateDialogHandle.openWithPayload({ apiKey: key })}
               onDelete={() => deleteDialogHandle.openWithPayload({ apiKey: key })}
             />
@@ -63,6 +66,7 @@ export function ApiKeyListSectionWithQuery() {
       )}
 
       <CreateApiKeyDialog handle={createDialogHandle} />
+      <ChangeApiKeyNameDialog handle={changeNameDialogHandle} />
       <RegenerateApiKeyDialog handle={regenerateDialogHandle} />
       <DeleteApiKeyDialog handle={deleteDialogHandle} />
     </Widget>

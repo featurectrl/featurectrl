@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useDialogHandlePayload } from "@/hooks/use-dialog-handle-payload.ts";
 import { useTRPC } from "@/lib/trpc.ts";
-import type { ApiKey } from "@/lib/trpc.types";
+import type { PublicKey } from "@/lib/trpc.types";
 import { Button } from "@/ui/button.tsx";
 import {
   Dialog,
@@ -16,15 +16,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/ui/dialog.tsx";
-import { ApiKeySecretView } from "./api-key-secret-view.tsx";
+import { Field, FieldLabel } from "@/ui/field.tsx";
+import { CopyableKey } from "../keys/copyable-key.tsx";
 
-type Secret = inferOutput<ReturnType<typeof useTRPC>["apiKeys"]["regenerate"]>;
+type Secret = inferOutput<ReturnType<typeof useTRPC>["publicKeys"]["regenerate"]>;
 
-interface RegenerateApiKeyDialogProps {
-  handle: DialogPrimitive.Handle<{ apiKey: ApiKey }>;
+interface RegeneratePublicKeyDialogProps {
+  handle: DialogPrimitive.Handle<{ publicKey: PublicKey }>;
 }
 
-export function RegenerateApiKeyDialog({ handle }: RegenerateApiKeyDialogProps) {
+export function RegeneratePublicKeyDialog({ handle }: RegeneratePublicKeyDialogProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const [regeneratedKey, setRegeneratedKey] = useState<Secret | null>(null);
@@ -36,10 +37,10 @@ export function RegenerateApiKeyDialog({ handle }: RegenerateApiKeyDialogProps) 
   }, [payload]);
 
   const regenerateMutation = useMutation(
-    trpc.apiKeys.regenerate.mutationOptions({
+    trpc.publicKeys.regenerate.mutationOptions({
       onSuccess: async (data) => {
         toast.success("Key regenerated");
-        await queryClient.invalidateQueries(trpc.apiKeys.list.queryFilter());
+        await queryClient.invalidateQueries(trpc.publicKeys.list.queryFilter());
         setRegeneratedKey(data);
       },
       onError: (error) => {
@@ -55,9 +56,9 @@ export function RegenerateApiKeyDialog({ handle }: RegenerateApiKeyDialogProps) 
           {regeneratedKey == null ? (
             <>
               <DialogHeader>
-                <DialogTitle>Regenerate key for {payload.apiKey.displayName}?</DialogTitle>
+                <DialogTitle>Regenerate key for {payload.publicKey.displayName}?</DialogTitle>
                 <DialogDescription>
-                  The existing secret key will stop working immediately. Any client still using it
+                  The existing public key will stop working immediately. Any client still using it
                   will need to be updated.
                 </DialogDescription>
               </DialogHeader>
@@ -74,7 +75,7 @@ export function RegenerateApiKeyDialog({ handle }: RegenerateApiKeyDialogProps) 
                 <Button
                   type="button"
                   variant="destructive"
-                  onClick={() => regenerateMutation.mutate({ id: payload.apiKey.id })}
+                  onClick={() => regenerateMutation.mutate({ id: payload.publicKey.id })}
                   disabled={regenerateMutation.isPending}
                 >
                   {regenerateMutation.isPending ? (
@@ -90,12 +91,15 @@ export function RegenerateApiKeyDialog({ handle }: RegenerateApiKeyDialogProps) 
               <DialogHeader>
                 <DialogTitle>Key regenerated</DialogTitle>
                 <DialogDescription>
-                  A new key for <span className="font-medium">{payload.apiKey.displayName}</span> is
-                  ready.
+                  A new key for <span className="font-medium">{payload.publicKey.displayName}</span>{" "}
+                  is ready.
                 </DialogDescription>
               </DialogHeader>
 
-              <ApiKeySecretView secretKey={regeneratedKey.secret.key} />
+              <Field>
+                <FieldLabel htmlFor="reveal-regenerated-public-key">Public key</FieldLabel>
+                <CopyableKey id="reveal-regenerated-public-key" value={regeneratedKey.secret.key} />
+              </Field>
 
               <DialogFooter>
                 <Button type="button" onClick={() => handle.close()}>
